@@ -1,0 +1,173 @@
+﻿#include "Board.h"
+#include "MoveGenerator.h"
+#include <iostream>
+#include <sstream>
+
+namespace ChessEngine {
+
+	Board::Board() {
+		setToStartPosition();
+	}
+
+	void Board::setToStartPosition() {
+		// پاکسازی صفحه
+		m_squares.fill(Piece::None);
+
+		// تنطیم مهره‌های سفید
+		m_squares[0] = Piece::WhiteRook;
+		m_squares[1] = Piece::WhiteKnight;
+		m_squares[2] = Piece::WhiteBishop;
+		m_squares[3] = Piece::WhiteQueen;
+		m_squares[4] = Piece::WhiteKing;
+		m_squares[5] = Piece::WhiteBishop;
+		m_squares[6] = Piece::WhiteKnight;
+		m_squares[7] = Piece::WhiteRook;
+		for (int i = 8; i < 16; i++) m_squares[i] = Piece::WhitePawn;
+
+		// تنطیم مهره‌های سیاه
+		m_squares[56] = Piece::BlackRook;
+		m_squares[57] = Piece::BlackKnight;
+		m_squares[58] = Piece::BlackBishop;
+		m_squares[59] = Piece::BlackQueen;
+		m_squares[60] = Piece::BlackKing;
+		m_squares[61] = Piece::BlackBishop;
+		m_squares[62] = Piece::BlackKnight;
+		m_squares[63] = Piece::BlackRook;
+		for (int i = 48; i < 56; i++) m_squares[i] = Piece::BlackPawn;
+
+		// تنظیمات اولیه
+		m_turn = Color::White;
+		std::fill(m_castlingRights, m_castlingRights + 4, true);
+		m_enPassantSquare = Square::None;
+		m_halfMoveClock = 0;
+		m_fullMoveNumber = 1;
+	}
+
+	std::vector<Move> Board::generateLegalMoves() const {
+		return MoveGenerator::generateLegalMoves(*this);
+	}
+
+	void Board::makeMove(const Move& move) {
+		// ذخیره تاریخچه برای undo
+		MoveHistory history;
+		history.move = move;
+		history.castlingRights = { m_castlingRights[0], m_castlingRights[1], m_castlingRights[2], m_castlingRights[3] };
+		history.enPassantSquare = m_enPassantSquare;
+		history.halfMoveClock = m_halfMoveClock;
+		m_moveHistory.push_back(history);
+
+		// اعمال حرکت
+		m_squares[move.to] = m_squares[move.from];
+		m_squares[move.from] = Piece::None;
+
+		// پردازش حرکات خاص
+		if (move.type == MoveType::Castling) {
+			// حرکت قلعه
+			// ...
+		}
+		else if (move.type == MoveType::EnPassant) {
+			// حذف پیاده حریف در En Passant
+			// ...
+		}
+		else if (move.type == MoveType::Promotion) {
+			// ارتقای پیاده
+			m_squares[move.to] = move.promotion;
+		}
+
+		// به‌روزرسانی وضعیت
+		m_turn = (m_turn == Color::White) ? Color::Black : Color::White;
+	}
+
+	void Board::undoMove() {
+		if (m_moveHistory.empty()) return;
+
+		const auto& history = m_moveHistory.back();
+		const Move& move = history.move;
+
+		// بازگرداندن حرکت
+		m_squares[move.from] = m_squares[move.to];
+		m_squares[move.to] = Piece::None;
+
+		// بازگردانی وضعیت
+		std::copy(history.castlingRights.begin(), history.castlingRights.end(), m_castlingRights);
+		m_enPassantSquare = history.enPassantSquare;
+		m_halfMoveClock = history.halfMoveClock;
+		m_turn = (m_turn == Color::White) ? Color::Black : Color::White;
+
+		m_moveHistory.pop_back();
+	}
+
+	std::string Board::toFEN() const {
+		std::stringstream fen;
+		int empty = 0;
+
+		// موقعیت مهره‌ها
+		for (int rank = 7; rank >= 0; rank--) {
+			for (int file = 0; file < 8; file++) {
+				int sq = rank * 8 + file;
+				Piece piece = m_squares[sq];
+				if (piece == Piece::None) {
+					empty++;
+				}
+				else {
+					if (empty > 0) fen << empty;
+					empty = 0;
+					fen << pieceToChar(piece);
+				}
+			}
+			if (empty > 0) fen << empty;
+			if (rank > 0) fen << '/';
+			empty = 0;
+		}
+
+		// رنگ نوبت
+		fen << (m_turn == Color::White ? " w " : " b ");
+
+		// حقوق قلعه
+		bool anyCastling = false;
+		if (m_castlingRights[0]) { fen << 'K'; anyCastling = true; }
+		if (m_castlingRights[1]) { fen << 'Q'; anyCastling = true; }
+		if (m_castlingRights[2]) { fen << 'k'; anyCastling = true; }
+		if (m_castlingRights[3]) { fen << 'q'; anyCastling = true; }
+		if (!anyCastling) fen << '-';
+
+		// En Passant
+		fen << (m_enPassantSquare == Square::None ? " - " : " " + squareToString(m_enPassantSquare) + " ");
+
+		// ساعت حرکت
+		fen << m_halfMoveClock << " " << m_fullMoveNumber;
+
+		return fen.str();
+	}
+
+	void Board::print() const {
+		const std::string pieces = " PNBRQK  pnbrqk";
+		for (int rank = 7; rank >= 0; rank--) {
+			std::cout << rank + 1 << " ";
+			for (int file = 0; file < 8; file++) {
+				int sq = rank * 8 + file;
+				std::cout << pieces[static_cast<int>(m_squares[sq])] << " ";
+			}
+			std::cout << "\n";
+		}
+		std::cout << "  a b c d e f g h\n";
+	}
+
+	// توابع کمکی
+	Bitboard Board::getPawnAttacks(Square sq, Color color) const {
+		// محاسبه حمله‌های پیاده با Bitboard
+		// ...
+	}
+
+	Bitboard Board::getKnightAttacks(Square sq) const {
+		// جدول از پیش محاسبه شده برای حرکت اسب
+		static const Bitboard knightAttacks[64] = {/*...*/ };
+		return knightAttacks[sq];
+	}
+
+	bool Board::isSquareAttacked(Square sq, Color attackerColor) const {
+		// بررسی حمله توسط تمام مهره‌های حریف
+		// ...
+	}
+
+} // namespace ChessEngine
