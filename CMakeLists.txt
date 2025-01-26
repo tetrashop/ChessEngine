@@ -1,5 +1,5 @@
 ﻿cmake_minimum_required(VERSION 3.10)  
-project(ChessEngineCLI  
+project(ChessEngine  
     VERSION 1.0.0  
     LANGUAGES CXX  
     DESCRIPTION "A UCI-Compatible Chess Engine"  
