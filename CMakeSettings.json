@@ -1,0 +1,11 @@
+{
+  "configurations": [
+    {
+      "name": "x64-Debug",
+      "generator": "Ninja",
+      "cmakeExecutable": "C:/Program Files/CMake/bin/cmake.exe", // Update this line
+      "buildRoot": "${projectDir}\\build\\${name}",
+      "variables": []
+    }
+  ]
+}

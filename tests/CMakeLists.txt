@@ -1,21 +1,12 @@
-﻿# فعال‌سازی Google Test  
-find_package(GTest REQUIRED)  
-include(GoogleTest)  
+﻿cmake_minimum_required(VERSION 3.31.4)  # حداقل نسخه در تستها
 
-# تست‌ها  
-add_executable(ChessEngineTests  
-    BoardTests.cpp  
-    MoveGeneratorTests.cpp  
-)  
+# تعریف تستها
+add_executable(test_board test_board.cpp)
+target_link_libraries(test_board
+    ChessEngine  # لینک به هدف اصلی
+    gtest_main   # لینک به کتابخانه تست
+)
 
-target_link_libraries(ChessEngineTests PRIVATE  
-    ChessEngineCore  
-    GTest::GTest  
-    GTest::Main  
-)  
-
-# افزودن تست به CTest  
-gtest_discover_tests(ChessEngineTests)  
-
-# کپی فایل‌های تست  
-file(COPY ${PROJECT_SOURCE_DIR}/tests/test_positions DESTINATION ${CMAKE_BINARY_DIR})  
+# فعالسازی تستها
+enable_testing()
+add_test(NAME test_board COMMAND test_board)

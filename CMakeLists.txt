@@ -1,38 +1,13 @@
-﻿cmake_minimum_required(VERSION 3.10)  
-project(ChessEngine  
-    VERSION 1.0.0  
-    LANGUAGES CXX  
-    DESCRIPTION "A UCI-Compatible Chess Engine"  
-)  
+﻿cmake_minimum_required(VERSION 3.31.4)  # حداقل نسخه الزامی
+project(ChessEngine)  # نام پروژه
 
-# تنظیمات کلی  
-set(CMAKE_CXX_STANDARD 17)  
-set(CMAKE_CXX_STANDARD_REQUIRED ON)  
-set(CMAKE_CXX_EXTENSIONS OFF)  
+# تعریف هدف اصلی (کتابخانه یا اجرایی)
+add_executable(ChessEngine  # یا add_library
+    src/main.cpp  # فایلهای منبع
+    # سایر فایلها...
+)
 
-# فعال‌سازی هشدارهای کامپایلر  
-if(MSVC)  
-    add_compile_options(/W4 /WX)  
-else()  
-    add_compile_options(-Wall -Wextra -Wpedantic -Werror)  
-endif()  
-
-# گزینه‌های ساخت  
-option(ENABLE_UCI "Enable UCI Protocol Support" ON)  
-option(ENABLE_SYZYGY "Integrate Syzygy Tablebases" OFF)  
-option(BUILD_TESTS "Build Unit Tests" ON)  
-
-# کتابخانه اصلی  
-add_subdirectory(src)  
-
-# تست‌ها  
-if(BUILD_TESTS)  
-    add_subdirectory(tests)  
-endif()  
-
-# نصب اجرایی  
-install(TARGETS ChessEngineCLI  
-    RUNTIME DESTINATION bin  
-    LIBRARY DESTINATION lib  
-    ARCHIVE DESTINATION lib  
-)  
+# اضافه کردن مسیر هدرها
+target_include_directories(ChessEngine PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+)

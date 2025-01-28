@@ -1,5 +1,9 @@
-﻿cmake_minimum_required(VERSION 3.10)  
-project(ChessEngine LANGUAGES CXX)  
+﻿# سرآیندهای عمومی را به پروژه اضافه کنید
+target_include_directories(ChessEngine PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}
+)
 
-add_subdirectory(src)  
-add_subdirectory(tests)  
+# اگر هدرها به صورت ماژولار سازماندهی شده‌اند:
+add_subdirectory(MoveGenerator)
+add_subdirectory(UCI)
+add_subdirectory(OpeningBook)
