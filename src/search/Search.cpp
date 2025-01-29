@@ -1,0 +1,83 @@
+﻿// src/search/Search.cpp
+#include "Search.h"
+#include "../utils/MoveGenerator.h"
+
+Search::Search(Board& board, Evaluator& evaluator)
+	: currentBoard(board), evaluator(evaluator) {}
+
+SearchResult Search::startSearch(int depth) {
+	SearchResult result;
+	result.nodesVisited = 0;
+
+	int alpha = -INFINITY;
+	int beta = INFINITY;
+
+	Move bestMove = MOVE_NONE;
+	int bestValue = -INFINITY;
+
+	MoveGenerator generator(currentBoard);
+	auto moves = generator.generateLegalMoves();
+
+	for (const auto& move : moves) {
+		currentBoard.makeMove(move);
+		int currentValue = alphaBeta(currentBoard, depth - 1, alpha, beta, false);
+		currentBoard.unmakeMove(move);
+
+		if (currentValue > bestValue) {
+			bestValue = currentValue;
+			bestMove = move;
+		}
+
+		alpha = std::max(alpha, bestValue);
+	}
+
+	result.bestMove = bestMove;
+	result.score = bestValue;
+	return result;
+}
+
+int Search::alphaBeta(Board& board, int depth, int alpha, int beta, bool maximizingPlayer) {
+	if (depth == 0 || board.isGameOver()) {
+		return evaluator.evaluate(board);
+	}
+
+	MoveGenerator generator(board);
+	auto moves = generator.generateLegalMoves();
+
+	if (maximizingPlayer) {
+		int value = -INFINITY;
+		for (const auto& move : moves) {
+			board.makeMove(move);
+			value = std::max(value, alphaBeta(board, depth - 1, alpha, beta, false));
+			board.unmakeMove(move);
+
+			alpha = std::max(alpha, value);
+			if (value >= beta)
+				break; // Beta cutoff
+		}
+		return value;
+	}
+	else {
+		int value = INFINITY;
+		for (const auto& move : moves) {
+			board.makeMove(move);
+			value = std::min(value, alphaBeta(board, depth - 1, alpha, beta, true));
+			board.unmakeMove(move);
+
+			beta = std::min(beta, value);
+			if (value <= alpha)
+				break; // Alpha cutoff
+		}
+		return value;
+	}
+}
+// فعالسازی جستجوی موازی ساده (۲ thread)
+void Search::startParallelSearch(int depth) {
+	std::vector<std::thread> threads;
+	for (int i = 0; i < 2; i++) {
+		threads.emplace_back([this, depth]() {
+			alphaBeta(currentBoard, depth, -INFINITY, INFINITY, true);
+		});
+	}
+	for (auto& t : threads) t.join();
+}
