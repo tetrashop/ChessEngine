@@ -1,12 +1,22 @@
-﻿cmake_minimum_required(VERSION 3.31.4)  # حداقل نسخه در تستها
+﻿enable_testing()
 
-# تعریف تستها
-add_executable(test_board test_board.cpp)
-target_link_libraries(test_board
-    ChessEngine  # لینک به هدف اصلی
-    gtest_main   # لینک به کتابخانه تست
-)
+# افزودن Google Test
+find_package(GTest REQUIRED)
+include(GoogleTest)
 
-# فعالسازی تستها
-enable_testing()
-add_test(NAME test_board COMMAND test_board)
+# تست‌های بیتبرد
+add_executable(BitboardTests BitboardTests.cpp)
+target_link_libraries(BitboardTests PRIVATE ChessEngineCore GTest::GTest GTest::Main)
+
+# تست‌های صفحه شطرنج
+add_executable(BoardTests BoardTests.cpp)
+target_link_libraries(BoardTests PRIVATE ChessEngineCore GTest::GTest GTest::Main)
+
+# تست‌های جستجو
+add_executable(SearchTests SearchTests.cpp)
+target_link_libraries(SearchTests PRIVATE ChessEngineCore GTest::GTest GTest::Main)
+
+# ثبت تمام تست‌ها
+gtest_discover_tests(BitboardTests)
+gtest_discover_tests(BoardTests)
+gtest_discover_tests(SearchTests)

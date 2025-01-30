@@ -1,13 +1,11 @@
-﻿cmake_minimum_required(VERSION 3.31.4)  # حداقل نسخه الزامی
-project(ChessEngine)  # نام پروژه
+﻿cmake_minimum_required(VERSION 3.15)
+project(ChessEngine LANGUAGES CXX)
 
-# تعریف هدف اصلی (کتابخانه یا اجرایی)
-add_executable(ChessEngine  # یا add_library
-    src/main.cpp  # فایلهای منبع
-    # سایر فایلها...
-)
+# تنظیمات استاندارد
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# اضافه کردن مسیر هدرها
-target_include_directories(ChessEngine PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
-)
+# افزودن زیرپروژه‌ها
+add_subdirectory(core)
+add_subdirectory(tests)
+add_subdirectory(gui)
