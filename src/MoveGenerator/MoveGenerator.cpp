@@ -150,3 +150,40 @@ namespace ChessEngine {
 	}
 
 } // namespace ChessEngine
+// در فایل MoveGenerator.cpp
+#include "MoveGenerator.hpp"
+
+std::vector<uint16_t> MoveGenerator::generateLegalMoves(const Board& board) {
+	std::vector<uint16_t> moves;
+	uint64_t allies = board.turn == 0 ?
+		(board.pawns[0] | board.knights[0] | board.bishops[0] |
+			board.rooks[0] | board.queens[0] | board.kings[0]) :
+			(board.pawns[1] | board.knights[1] | board.bishops[1] |
+				board.rooks[1] | board.queens[1] | board.kings[1]);
+
+	uint64_t enemies = board.turn == 0 ?
+		(board.pawns[1] | board.knights[1] | board.bishops[1] |
+			board.rooks[1] | board.queens[1] | board.kings[1]) :
+			(board.pawns[0] | board.knights[0] | board.bishops[0] |
+				board.rooks[0] | board.queens[0] | board.kings[0]);
+
+	// تولید حرکات پیادهها
+	uint64_t pawns = board.turn == 0 ? board.pawns[0] : board.pawns[1];
+	uint64_t pawnMoves = pawnAttacks(pawns, board.turn) & enemies; // حملات
+	// افزودن حرکات به لیست...
+
+	// تولید حرکات اسبها
+	uint64_t knights = board.turn == 0 ? board.knights[0] : board.knights[1];
+	uint64_t knightMoves = knightAttacks(knights) & ~allies;
+	// افزودن حرکات به لیست...
+
+	return moves;
+}
+// MoveGenerator.cpp
+#include "../include/Bitboard/Bitboard.hpp"
+#include "../Utils/BitboardUtils.hpp"
+
+void MoveGenerator::generatePawnMoves() {
+	uint64_t attacks = BitboardUtils::pawnAttacks(pawns, color);
+	// ...
+}
