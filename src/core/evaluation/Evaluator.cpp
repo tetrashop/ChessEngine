@@ -17,3 +17,14 @@ int Evaluator::pieceActivity(const ChessBoard& board, Color color) {
     }
     return activity;
 }
+// Evaluator.cpp
+int Evaluator::Evaluate(const Board& board) {
+	int score = 0;
+	// امتیاز مواد (Material Score)
+	score += GetMaterialScore(board);
+	// امتیاز موقعیت (Piece-Square Tables)
+	score += GetPositionalScore(board);
+	// ایمنی شاه (King Safety)
+	score += EvaluateKingSafety(board);
+	return score;
+}

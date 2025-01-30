@@ -81,3 +81,71 @@ void Search::startParallelSearch(int depth) {
 	}
 	for (auto& t : threads) t.join();
 }
+// مثال ساده از Minimax با هرس آلفا-بتا
+
+	// Search.cpp
+int Search::AlphaBeta(Board& board, int depth, int alpha, int beta, bool maximizingPlayer) {
+	if (depth == 0 || board.IsGameOver()) {
+		return evaluator.Evaluate(board);
+	}
+
+	auto moves = board.GenerateMoves();
+	if (maximizingPlayer) {
+		int value = -INFINITY;
+		for (Move move : moves) {
+			board.MakeMove(move);
+			value = std::max(value, AlphaBeta(board, depth - 1, alpha, beta, false));
+			board.UndoMove(move);
+			alpha = std::max(alpha, value);
+			if (alpha >= beta) break; // Beta cutoff
+		}
+		return value;
+	}
+	else {
+		int value = INFINITY;
+		for (Move move : moves) {
+			board.MakeMove(move);
+			value = std::min(value, AlphaBeta(board, depth - 1, alpha, beta, true));
+			board.UndoMove(move);
+			beta = std::min(beta, value);
+			if (beta <= alpha) break; // Alpha cutoff
+		}
+		return value;
+	}
+	int Search::Quiescence(Board& board, int alpha, int beta) {
+		int standPat = evaluator.Evaluate(board);
+		if (standPat >= beta) return beta;
+		if (standPat > alpha) alpha = standPat;
+
+		auto captures = moveGenerator.GenerateCaptures(board);
+		for (const auto& move : captures) {
+			board.MakeMove(move);
+			int score = -Quiescence(board, -beta, -alpha);
+			board.UndoMove(move);
+			if (score >= beta) return beta;
+			if (score > alpha) alpha = score;
+		}
+		return alpha;
+	}
+
+	int Search::AlphaBeta(Board& board, int depth, int alpha, int beta, bool isQuiescence) {
+		if (depth == 0) return Quiescence(board, alpha, beta); // فراخوانی Quiescence
+		// ... ادامه کد AlphaBeta
+	}
+	// مرتب‌سازی حرکات بر اساس:
+// 1. حرکات کیش
+// 2. حرکات با ارزش بالاتر (مثلاً Capture/ Promotion)
+	void Search::OrderMoves(std::vector<Move>& moves, const Board& board) {
+		std::sort(moves.begin(), moves.end(), [&](const Move& a, const Move& b) {
+			return evaluator.EvaluateMove(a, board) > evaluator.EvaluateMove(b, board);
+		});
+	}
+	Move Search::FindBestMove(Board& board, int maxDepth) {
+		Move bestMove;
+		for (int depth = 1; depth <= maxDepth; depth++) {
+			int score = AlphaBeta(board, depth, -INFINITY, INFINITY);
+			// به‌روزرسانی بهترین حرکت بر اساس عمق جستجو
+		}
+		return bestMove;
+	}
+}

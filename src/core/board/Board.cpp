@@ -169,5 +169,49 @@ namespace ChessEngine {
 		// بررسی حمله توسط تمام مهره‌های حریف
 		// ...
 	}
+	
 
+// تکمیل پارسر FEN
+	void Board::ResetToFEN(const std::string& fen) {
+		// مثال FEN: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+		std::istringstream iss(fen);
+		std::string piecePlacement, activeColor, castling, enPassant, halfMove, fullMove;
+
+		iss >> piecePlacement >> activeColor >> castling >> enPassant >> halfMove >> fullMove;
+
+		// ریست تخته
+		memset(bitboards, 0, sizeof(bitboards));
+
+		int row = 7, col = 0;
+		for (char c : piecePlacement) {
+			if (c == '/') {
+				row--;
+				col = 0;
+			}
+			else if (isdigit(c)) {
+				col += c - '0';
+			}
+			else {
+				int piece = CharToPiece(c);
+				SetBit(bitboards[piece], row * 8 + col);
+				col++;
+			}
+		}
+
+		isWhiteTurn = (activeColor == "w");
+		// مدیریت وضعیت قلعه و آنپاسان (نیاز به پیاده‌سازی)
+	}
+	// MoveGenerator.cpp
+	std::vector<Move> Board::GenerateKnightMoves(int square, Color color) {
+		std::vector<Move> moves;
+		uint64_t knightAttacks = precomputedKnightAttacks[square];
+		uint64_t targetSquares = knightAttacks & ~GetColorBitboard(color);
+
+		while (targetSquares) {
+			int target = GetLSB(targetSquares);
+			moves.push_back(CreateMove(square, target));
+			targetSquares &= targetSquares - 1;
+		}
+		return moves;
+	}
 } // namespace ChessEngine
