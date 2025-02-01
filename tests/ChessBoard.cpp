@@ -1,8 +1,46 @@
 ﻿#include "ChessBoard.h"
 #include <algorithm>
 
-ChessBoard::ChessBoard() { initializeBoard(); }
+#pragma once  
+#include <vector>  
+#include "Piece.h"  
 
+class ChessBoard {
+public:
+	// ترمیم: افزودن وضعیت آنپاسان و حرکات قلعه  
+	ChessBoard();
+	void Initialize();
+	void ApplyMove(const Move& move);
+	bool IsEnPassantPossible(int pawnRow, int pawnCol) const;
+	// افزودن Zobrist Hashing برای جدول انتقال  
+	uint64_t GetZobristKey() const;
+
+private:
+	std::vector<std::vector<Piece>> board;
+	bool whiteToMove;
+	Square enPassantTarget;
+	// وضعیت قلعه (K=King, Q=Queen)  
+	bool whiteCastleK, whiteCastleQ, blackCastleK, blackCastleQ;
+	uint64_t zobristKey;
+};
+ChessBoard::ChessBoard() { initializeBoard(); }
+#include "ChessBoard.h"  
+#include "Zobrist.h" // فرضاً پیادهسازی شده  
+
+ChessBoard::ChessBoard() {
+	Initialize();
+}
+
+void ChessBoard::ApplyMove(const Move& move) {
+	// ترمیم: پردازش آنپاسان  
+	if (move.IsEnPassant()) {
+		int targetRow = move.GetTarget().row;
+		int targetCol = move.GetTarget().col;
+		// حذف پیاده حریف  
+		board[targetRow + (whiteToMove ? -1 : 1)][targetCol] = Piece::None;
+	}
+	// ... (بقیه منطق)  
+}
 void ChessBoard::initializeBoard() {
 	// مقداردهی اولیه مهره‌ها
 	// ...

@@ -14,6 +14,9 @@ namespace ChessEngine {
 
 		// تولید حرکات مجاز بدون بررسی شاه در معرض خطر (برای بهینه‌سازی)
 		static std::vector<Move> generatePseudoLegalMoves(const Board& board);
+		static std::vector<Move> GeneratePawnMoves(const ChessBoard& board, int row, int col, bool includeSpecialMoves);
+		// تولید حرکات آنپاسان  
+		static std::vector<Move> GenerateEnPassantMoves(const ChessBoard& board, int row, int col);
 
 	private:
 		// تولید حرکات برای هر نوع مهره
