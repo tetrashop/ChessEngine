@@ -410,3 +410,12 @@ Move ChessBoard::parallelAlphaBeta(int depth) {
 	}
 	return bestMove;
 }
+void ChessBoard::ApplyMove(const Move& move) {
+	// ...
+	if (move.IsEnPassant()) {
+		// حذف پیاده حریف (ردیف هدف بسته به رنگ بازیکن متفاوت است)
+		int capturedPawnRow = move.GetTarget().row + (whiteToMove ? -1 : 1);
+		board[capturedPawnRow][move.GetTarget().col] = Piece::None;
+	}
+	// ...
+}

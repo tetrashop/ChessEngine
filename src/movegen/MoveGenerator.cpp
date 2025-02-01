@@ -85,35 +85,130 @@ namespace ChessEngine {
 		}
 	}
 
-	// ##### تولید حرکات فیل #####
-	void MoveGenerator::generateBishopMoves(...) { /* منطق مشابه با پر کردن خطوط */ }
+#include <vector>
+#include "ChessBoard.h"
+#include "Move.h"
 
-	// ##### تولید حرکات رخ #####
-	void MoveGenerator::generateRookMoves(...) { /* منطق پر کردن خطوط مستقیم */ }
+	class MoveGenerator {
+	public:
+		static void generateBishopMoves(const ChessBoard& board, int row, int col, std::vector<Move>& moves) {
+			// جهت‌های حرکت فیل (۴ جهت قطری)
+			const int directions[4][2] = { {1,1}, {1,-1}, {-1,1}, {-1,-1} };
 
-	// ##### تولید حرکات وزیر #####
-	void MoveGenerator::generateQueenMoves(...) { /* ترکیب فیل و رخ */ }
+			for (auto& dir : directions) {
+				for (int step = 1; step < 8; step++) {
+					int newRow = row + dir[0] * step;
+					int newCol = col + dir[1] * step;
 
-	// ##### تولید حرکات شاه #####
-	void MoveGenerator::generateKingMoves(...) {
-		// حرکت عادی + قلعه (با بررسی حقوق قلعه)
-	}
+					if (!board.isValidSquare(newRow, newCol)) break;
 
-	// ##### حرکات خاص: قلعه #####
-	void MoveGenerator::generateCastlingMoves(...) {
-		if (!board.canCastle(color)) return;
+					Piece targetPiece = board.getPiece(newRow, newCol);
+					if (targetPiece == Piece::None) {
+						moves.emplace_back(row, col, newRow, newCol);
+					}
+					else {
+						if (board.isEnemy(newRow, newCol))
+							moves.emplace_back(row, col, newRow, newCol, MoveType::Capture);
+						break;
+					}
+				}
+			}
+		}
 
-		// بررسی مسیر خالی و عدم حمله به خانه‌های مسیر
-		// اضافه کردن حرکت قلعه به لیست
-	}
+		static void generateRookMoves(const ChessBoard& board, int row, int col, std::vector<Move>& moves) {
+			// جهت‌های حرکت رخ (۴ جهت مستقیم)
+			const int directions[4][2] = { {1,0}, {-1,0}, {0,1}, {0,-1} };
 
-	// ##### حرکات خاص: En Passant #####
-	void MoveGenerator::generateEnPassantMoves(...) {
-		Square epSquare = board.getEnPassantSquare();
-		if (epSquare == Square::None) return;
+			for (auto& dir : directions) {
+				for (int step = 1; step < 8; step++) {
+					int newRow = row + dir[0] * step;
+					int newCol = col + dir[1] * step;
 
-		// بررسی وجود پیاده قابل انجام En Passant
-	}
+					if (!board.isValidSquare(newRow, newCol)) break;
+
+					Piece targetPiece = board.getPiece(newRow, newCol);
+					if (targetPiece == Piece::None) {
+						moves.emplace_back(row, col, newRow, newCol);
+					}
+					else {
+						if (board.isEnemy(newRow, newCol))
+							moves.emplace_back(row, col, newRow, newCol, MoveType::Capture);
+						break;
+					}
+				}
+			}
+		}
+
+		static void generateQueenMoves(const ChessBoard& board, int row, int col, std::vector<Move>& moves) {
+			// ترکیب حرکات فیل و رخ
+			generateBishopMoves(board, row, col, moves);
+			generateRookMoves(board, row, col, moves);
+		}
+
+		static void generateKingMoves(const ChessBoard& board, int row, int col, std::vector<Move>& moves) {
+			// حرکات عادی شاه (۸ جهت)
+			const int directions[8][2] = { {1,0}, {-1,0}, {0,1}, {0,-1}, {1,1}, {1,-1}, {-1,1}, {-1,-1} };
+
+			for (auto& dir : directions) {
+				int newRow = row + dir[0];
+				int newCol = col + dir[1];
+
+				if (board.isValidSquare(newRow, newCol)) {
+					if (board.isEmpty(newRow, newCol)) {
+						moves.emplace_back(row, col, newRow, newCol);
+					}
+					else if (board.isEnemy(newRow, newCol)) {
+						moves.emplace_back(row, col, newRow, newCol, MoveType::Capture);
+					}
+				}
+			}
+
+			// حرکات قلعه
+			generateCastlingMoves(board, row, col, moves);
+		}
+
+		static void generateCastlingMoves(const ChessBoard& board, int row, int col, std::vector<Move>& moves) {
+			if (!board.canCastle(board.getTurnColor())) return;
+
+			const bool isWhite = board.isWhiteTurn();
+			const int backRank = isWhite ? 0 : 7;
+
+			// قلعه کوتاه (Kingside)
+			if (board.hasCastleRight(isWhite, CastleSide::King) &&
+				board.isEmpty(backRank, 5) &&
+				board.isEmpty(backRank, 6) &&
+				!board.isSquareAttacked(backRank, 4) &&
+				!board.isSquareAttacked(backRank, 5))
+			{
+				moves.emplace_back(MoveType::Castle, Square{ row,col }, Square{ backRank,6 });
+			}
+
+			// قلعه بلند (Queenside)
+			if (board.hasCastleRight(isWhite, CastleSide::Queen) &&
+				board.isEmpty(backRank, 3) &&
+				board.isEmpty(backRank, 2) &&
+				board.isEmpty(backRank, 1) &&
+				!board.isSquareAttacked(backRank, 4) &&
+				!board.isSquareAttacked(backRank, 3))
+			{
+				moves.emplace_back(MoveType::Castle, Square{ row,col }, Square{ backRank,2 });
+			}
+		}
+
+		static void generateEnPassantMoves(const ChessBoard& board, int row, int col, std::vector<Move>& moves) {
+			Square epSquare = board.getEnPassantTarget();
+			if (epSquare == Square::Invalid) return;
+
+			const int direction = board.isWhiteTurn() ? 1 : -1;
+			const int epRow = epSquare.row;
+			const int epCol = epSquare.col;
+
+			// بررسی پیاده‌های قابل انجام En Passant
+			if (row + direction == epRow && (col == epCol + 1 || col == epCol - 1)) {
+				moves.emplace_back(MoveType::EnPassant, Square{ row,col }, epSquare);
+			}
+		}
+	};
 
 	// ##### بررسی قانونی بودن حرکت #####
 	bool MoveGenerator::isMoveLegal(const Board& board, const Move& move) {
