@@ -148,4 +148,11 @@ int Search::AlphaBeta(Board& board, int depth, int alpha, int beta, bool maximiz
 		}
 		return bestMove;
 	}
+	// در Search.cpp
+	int alphaBeta(...) {
+		TTEntry* entry = tt.probe(zobristKey);
+		if (entry->depth >= depth) return entry->score;
+		// ...
+	}
+
 }

@@ -67,6 +67,11 @@ class TranspositionTable {
 public:
 	void save(uint64_t hash, const TranspositionTableEntry& entry);
 	std::optional<TranspositionTableEntry> probe(uint64_t hash);
+	int quiescence(...) {
+		int standPat = evaluate();
+		if (standPat >= beta) return beta;
+		// ...
+	}
 
 private:
 	std::unordered_map<uint64_t, TranspositionTableEntry> table;

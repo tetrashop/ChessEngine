@@ -187,3 +187,21 @@ void MoveGenerator::generatePawnMoves() {
 	uint64_t attacks = BitboardUtils::pawnAttacks(pawns, color);
 	// ...
 }
+// در MoveGenerator.cpp
+void generateCastlingMoves(...) {
+	if (canCastleKingside) {
+		// بررسی مسیر ۵ و ۶ برای سفید، ۶۳ و ۶۲ برای سیاه
+		if (!isAttacked(castlePath)) addCastleMove(...);
+	}
+}
+
+
+std::vector<Move> MoveGenerator::GenerateEnPassantMoves(const ChessBoard& board, int row, int col) {
+	std::vector<Move> moves;
+	if (board.IsEnPassantPossible(row, col)) {
+		// ترمیم: افزودن حرکت آنپاسان معتبر  
+		Square target = { row + (board.IsWhiteToMove() ? 1 : -1), col };
+		moves.emplace_back(MoveType::EnPassant, Square{ row, col }, target);
+	}
+	return moves;
+}

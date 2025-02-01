@@ -28,3 +28,15 @@ int Evaluator::Evaluate(const Board& board) {
 	score += EvaluateKingSafety(board);
 	return score;
 }
+// در Evaluator.cpp
+int evaluatePawnStructure(...) {
+	// جریمه پیاده‌های ایزوله/دوگانه
+	score -= isolatedPawns * 15;
+	score -= doubledPawns * 10;
+}
+// در Evaluator.cpp
+int evaluatePawnStructure(...) {
+	// جریمه پیاده‌های ایزوله/دوگانه
+	score -= isolatedPawns * 15;
+	score -= doubledPawns * 10;
+}
