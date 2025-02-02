@@ -175,3 +175,10 @@ SearchResult minimax(Board board, int depth) {
 	}
 	return best;
 }
+bool Board::is_checkmate(bool is_white) {
+	if (!is_in_check(is_white)) return false;
+
+	// بررسی وجود حرکات قانونی  
+	auto moves = generate_all_moves();
+	return moves.empty();
+}

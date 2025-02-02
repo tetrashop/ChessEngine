@@ -244,15 +244,14 @@ namespace ChessEngine {
 	// در Board.cpp  
 	std::vector<Move> Board::generate_knight_moves(int x, int y) {
 		std::vector<Move> moves;
-		Piece piece = squares[x][y];
-		int directions[8][2] = {
+		const int directions[8][2] = {
 			{-2, -1}, {-2, 1},
 			{-1, -2}, {-1, 2},
 			{1, -2},  {1, 2},
 			{2, -1},  {2, 1}
 		};
 
-		for (auto& dir : directions) {
+		for (const auto& dir : directions) {
 			int new_x = x + dir[0];
 			int new_y = y + dir[1];
 			if (new_x >= 0 && new_x < 8 && new_y >= 0 && new_y < 8) {
@@ -264,4 +263,57 @@ namespace ChessEngine {
 		}
 		return moves;
 	}
+	// در Board.cpp  
+	bool Board::is_in_check(bool is_white) {
+		// پیدا کردن موقعیت شاه  
+		int king_x = -1, king_y = -1;
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				if (squares[i][j] == (is_white ? Piece::WhiteKing : Piece::BlackKing)) {
+					king_x = i;
+					king_y = j;
+					break;
+				}
+			}
+		}
+
+		// بررسی تمام حرکات حریف برای حمله به شاه  
+		bool in_check = false;
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				Piece p = squares[i][j];
+				if (p != Piece::None && is_white != is_white_piece(p)) {
+					auto moves = generate_moves_for_piece(i, j);
+					for (const auto& move : moves) {
+						if (move.to_x == king_x && move.to_y == king_y) {
+							in_check = true;
+							break;
+						}
+					}
+				}
+			}
+		}
+		return in_check;
+	}
+
+	bool Board::is_move_legal(const Move& move) {
+		// اعمال حرکت موقت  
+		Board temp_board = *this;
+		temp_board.apply_move(move);
+
+		// بررسی کیش بودن پس از حرکت  
+		return !temp_board.is_in_check(is_white_turn);
+	}
+	// در generate_pawn_moves()  
+	std::vector<Move> Board::generate_pawn_moves(int x, int y) {
+		std::vector<Move> raw_moves = ...; // همان کد قبلی  
+		std::vector<Move> legal_moves;
+		for (const auto& move : raw_moves) {
+			if (is_move_legal(move)) {
+				legal_moves.push_back(move);
+			}
+		}
+		return legal_moves;
+	}
+
 } // namespace ChessEngine

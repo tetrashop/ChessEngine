@@ -12,3 +12,4 @@ add_executable(chess_engine
     src/main.cpp
     src/Board/Board.cpp
 )
+cmake -DCMAKE_TOOLCHAIN_FILE="D:/dev/vcpkg/scripts/buildsystems/vcpkg.cmake" ..

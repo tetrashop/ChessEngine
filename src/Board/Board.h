@@ -35,6 +35,10 @@ namespace ChessEngine {
 		std::vector<Move> generate_pawn_moves(int x, int y);
 		std::array<std::array<Piece, 8>, 8> squares;
 		std::vector<Move> generate_knight_moves(int x, int y);
+		std::array<std::array<Piece, 8>, 8> squares;
+		std::vector<Move> generate_pawn_moves(int x, int y);
+		bool is_in_check(bool is_white); // بررسی کیش بودن رنگ خاص  
+		bool is_move_legal(const Move& move); // بررسی قانونی بودن حرکت  
 		void set_from_fen(const std::string& fen) {
 			// پیادهسازی سادهی FEN Parser برای موقعیت شروع
 			if (fen == "startpos") {
