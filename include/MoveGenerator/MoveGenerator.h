@@ -12,6 +12,7 @@ namespace ChessEngine {
 		enum class MoveType { Normal, Capture, EnPassant, Castle, Promotion };
 		enum class CastleSide { King, Queen };
 		struct Square { int row, col; };
+
 		// تولید تمام حرکات مجاز برای رنگ فعلی
 		static std::vector<Move> generateLegalMoves(const Board& board);
 

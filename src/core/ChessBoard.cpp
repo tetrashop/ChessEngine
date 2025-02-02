@@ -419,3 +419,8 @@ void ChessBoard::ApplyMove(const Move& move) {
 	}
 	// ...
 }
+bool ChessBoard::isMoveLegal(Position from, Position to) const {
+	ChessBoard tempBoard = *this;
+	tempBoard.makeMove(from, to);
+	return !tempBoard.isInCheck(getPiece(from).color);
+}
