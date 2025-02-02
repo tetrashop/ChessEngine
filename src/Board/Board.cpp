@@ -315,5 +315,49 @@ namespace ChessEngine {
 		}
 		return legal_moves;
 	}
+#include "Board.h"  
+#include <algorithm>  
 
+	// ... (توابع set_from_fen و generate_all_moves)  
+
+	bool Board::is_in_check(bool is_white) {
+		int king_x = -1, king_y = -1;
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				if (squares[i][j] == (is_white ? Piece::WhiteKing : Piece::BlackKing)) {
+					king_x = i;
+					king_y = j;
+					break;
+				}
+			}
+		}
+
+		// بررسی تمام حرکات حریف  
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				Piece p = squares[i][j];
+				if (p != Piece::None && (is_white != (p == Piece::WhitePawn || p == Piece::WhiteKing /* ... */))) {
+					auto moves = generate_moves_for_piece(i, j);
+					for (const auto& move : moves) {
+						if (move.to_x == king_x && move.to_y == king_y) {
+							return true;
+						}
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	bool Board::is_move_legal(const Move& move) {
+		Board temp = *this;
+		temp.apply_move(move);
+		return !temp.is_in_check(is_white_turn);
+	}
+
+	bool Board::is_checkmate(bool is_white) {
+		if (!is_in_check(is_white)) return false;
+		auto moves = generate_all_moves();
+		return moves.empty();
+	}
 } // namespace ChessEngine

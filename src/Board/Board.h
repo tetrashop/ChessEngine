@@ -11,9 +11,7 @@ namespace ChessEngine {
 #include <vector>  
 #include <string>  
 
-	struct Move {
 	
-	};
 
 	// انواع مهره‌ها
 	enum class Piece {
@@ -39,6 +37,14 @@ namespace ChessEngine {
 		std::vector<Move> generate_pawn_moves(int x, int y);
 		bool is_in_check(bool is_white); // بررسی کیش بودن رنگ خاص  
 		bool is_move_legal(const Move& move); // بررسی قانونی بودن حرکت  
+		std::array<std::array<Piece, 8>, 8> squares;
+		bool is_white_turn = true; // نوبت بازیکن  
+		void set_from_fen(const std::string& fen);
+		std::vector<Move> generate_all_moves();
+		bool is_in_check(bool is_white);
+		bool is_move_legal(const Move& move);
+		bool is_checkmate(bool is_white);
+
 		void set_from_fen(const std::string& fen) {
 			// پیادهسازی سادهی FEN Parser برای موقعیت شروع
 			if (fen == "startpos") {
