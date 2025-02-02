@@ -7,6 +7,13 @@
 #include <cstdint>
 
 namespace ChessEngine {
+	// در Board.h  
+#include <vector>  
+#include <string>  
+
+	struct Move {
+	
+	};
 
 	// انواع مهره‌ها
 	enum class Piece {
@@ -25,10 +32,17 @@ namespace ChessEngine {
 	class Board {
 	public:
 		Board();
-
-		// تنظیم موقعیت اولیه
-		void setToStartPosition();
-
+		std::vector<Move> generate_pawn_moves(int x, int y);
+		std::array<std::array<Piece, 8>, 8> squares;
+		std::vector<Move> generate_knight_moves(int x, int y);
+		void set_from_fen(const std::string& fen) {
+			// پیادهسازی سادهی FEN Parser برای موقعیت شروع
+			if (fen == "startpos") {
+				// تنظیم مهرهها در موقعیت اولیه
+				squares[0] = { /* رخ, اسب, فیل, وزیر, شاه, ... */ };
+				// ...
+			}
+		}
 		// تولید تمام حرکات مجاز
 		std::vector<Move> generateLegalMoves() const;
 
@@ -72,6 +86,13 @@ namespace ChessEngine {
 		Piece piece;
 		Piece promotion; // برای ارتقاء پیاده
 		MoveType type;   // عادی، En Passant، قلعه، ارتقاء
+		int from_x, from_y;
+		int to_x, to_y;
+		std::string to_string() const {
+			char cols[] = { 'a','b','c','d','e','f','g','h' };
+			return std::string(1, cols[from_y]) + std::to_string(8 - from_x) +
+				std::string(1, cols[to_y]) + std::to_string(8 - to_x);
+		}
 	};
 
 } // namespace ChessEngine

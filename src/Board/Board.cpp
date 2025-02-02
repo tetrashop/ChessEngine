@@ -214,4 +214,54 @@ namespace ChessEngine {
 		}
 		return moves;
 	}
+	// در Board.cpp  
+	std::vector<Move> Board::generate_pawn_moves(int x, int y) {
+		std::vector<Move> moves;
+		Piece piece = squares[x][y];
+
+		// حرکت سفیدها به جلو  
+		if (piece == Piece::WhitePawn) {
+			// حرکت ۱ خانه  
+			if (x > 0 && squares[x - 1][y] == Piece::None) {
+				moves.push_back({ x, y, x - 1, y });
+				// حرکت ۲ خانه در اولین حرکت  
+				if (x == 6 && squares[x - 2][y] == Piece::None) {
+					moves.push_back({ x, y, x - 2, y });
+				}
+			}
+			// ضربهی اریب (چپ)  
+			if (x > 0 && y > 0 && squares[x - 1][y - 1] != Piece::None) {
+				moves.push_back({ x, y, x - 1, y - 1 });
+			}
+			// ضربهی اریب (راست)  
+			if (x > 0 && y < 7 && squares[x - 1][y + 1] != Piece::None) {
+				moves.push_back({ x, y, x - 1, y + 1 });
+			}
+		}
+		// حرکت سیاهها به جلو (مشابه با جهت معکوس)  
+		return moves;
+	}
+	// در Board.cpp  
+	std::vector<Move> Board::generate_knight_moves(int x, int y) {
+		std::vector<Move> moves;
+		Piece piece = squares[x][y];
+		int directions[8][2] = {
+			{-2, -1}, {-2, 1},
+			{-1, -2}, {-1, 2},
+			{1, -2},  {1, 2},
+			{2, -1},  {2, 1}
+		};
+
+		for (auto& dir : directions) {
+			int new_x = x + dir[0];
+			int new_y = y + dir[1];
+			if (new_x >= 0 && new_x < 8 && new_y >= 0 && new_y < 8) {
+				Piece target = squares[new_x][new_y];
+				if (target == Piece::None || (is_white(piece) != is_white(target))) {
+					moves.push_back({ x, y, new_x, new_y });
+				}
+			}
+		}
+		return moves;
+	}
 } // namespace ChessEngine

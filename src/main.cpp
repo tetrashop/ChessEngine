@@ -307,6 +307,9 @@ int main() {
 		std::cout << "Total: " << totalProgress << "% | "
 			<< "Task: " << task.name << " (" << task.progress << "%)\n";
 	};
+	Board board;
+	board.set_from_fen("startpos");
+
 
 	// ایجاد موتور و اتصال callback
 	ChessEngine engine(progressHandler);

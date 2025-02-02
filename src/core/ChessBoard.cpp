@@ -424,3 +424,11 @@ bool ChessBoard::isMoveLegal(Position from, Position to) const {
 	tempBoard.makeMove(from, to);
 	return !tempBoard.isInCheck(getPiece(from).color);
 }
+void ChessBoard::applyEnPassant(Position from, Position to) {
+	if (getPiece(from).type == PieceType::Pawn && abs(from.y - to.y) == 2) {
+		gameState.enPassantTarget = { to.x, (from.y + to.y) / 2 };
+	}
+	else {
+		gameState.enPassantTarget = { -1, -1 };
+	}
+}
