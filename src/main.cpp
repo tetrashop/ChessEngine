@@ -308,6 +308,22 @@ int main() {
 			<< "Task: " << task.name << " (" << task.progress << "%)\n";
 	};
 	Board board;
+	UCIHandler uci;
+	std::string cmd;
+	while (std::getline(std::cin, cmd)) {
+		if (cmd == "uci") {
+			std::cout << "id name MyEngine\nuciok\n";
+		}
+		else if (cmd.starts_with("position")) {
+			uci.process_command(cmd);
+		}
+		else if (cmd.starts_with("go depth")) {
+			int depth = std::stoi(cmd.substr(9));
+			SearchResult result = minimax(uci.board, depth);
+			std::cout << "bestmove " << result.best_move.to_string() << "\n";
+		}
+	}
+	
 	board.set_from_fen("startpos");
 
 

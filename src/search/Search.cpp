@@ -156,3 +156,22 @@ int Search::AlphaBeta(Board& board, int depth, int alpha, int beta, bool maximiz
 	}
 
 }
+// در Search.cpp  
+SearchResult minimax(Board board, int depth) {
+	if (depth == 0) {
+		return { Move(), board.evaluate() };
+	}
+	auto moves = board.generate_all_moves();
+	if (moves.empty()) return { Move(), -9999 }; // مات  
+
+	SearchResult best = { moves[0], -99999 };
+	for (const auto& move : moves) {
+		Board new_board = board;
+		new_board.apply_move(move);
+		int score = -minimax(new_board, depth - 1).score;
+		if (score > best.score) {
+			best = { move, score };
+		}
+	}
+	return best;
+}

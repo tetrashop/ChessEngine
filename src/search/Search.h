@@ -76,3 +76,10 @@ public:
 private:
 	std::unordered_map<uint64_t, TranspositionTableEntry> table;
 };
+// در Search.h  
+#include "Board.h"  
+struct SearchResult {
+	Move best_move;
+	int score;
+};
+SearchResult minimax(Board board, int depth);
