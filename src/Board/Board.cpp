@@ -304,6 +304,16 @@ namespace ChessEngine {
 		// بررسی کیش بودن پس از حرکت  
 		return !temp_board.is_in_check(is_white_turn);
 	}
+	void Board::apply_move(const Move& move) {
+		// ...  
+		// پردازش آنپاسان  
+		if (move.is_en_passant) {
+			int target_pawn_x = move.from_x; // برای سفید: x + 1، برای سیاه: x - 1  
+			squares[target_pawn_x][move.to_y] = Piece::None;
+		}
+	}
+
+	
 	// در generate_pawn_moves()  
 	std::vector<Move> Board::generate_pawn_moves(int x, int y) {
 		std::vector<Move> raw_moves = ...; // همان کد قبلی  
@@ -312,6 +322,28 @@ namespace ChessEngine {
 			if (is_move_legal(move)) {
 				legal_moves.push_back(move);
 			}
+		}
+		// در generate_pawn_moves()  
+		if (is_white) {
+			
+			// بررسی امکان آنپاسان  
+			if (en_passant_target.has_value()) {
+				int ep_x = en_passant_target->first;
+				int ep_y = en_passant_target->second;
+				if ((is_white && x == ep_x + 1 && (y == ep_y - 1 || y == ep_y + 1)) ||
+					(!is_white && x == ep_x - 1 && (y == ep_y - 1 || y == ep_y + 1))) {
+					moves.push_back({ x, y, ep_x, ep_y, /* is_en_passant */ true });
+				}
+			}
+		}
+
+		// در generate_king_moves()  
+// قلعه شاهسوی سفید  
+		if (castling_rights.white_kingside &&
+			squares[7][5] == Piece::None &&
+			squares[7][6] == Piece::None &&
+			!is_in_check(true)) {
+			moves.push_back({ 7, 4, 7, 6 }); // e1g1  
 		}
 		return legal_moves;
 	}
@@ -359,5 +391,32 @@ namespace ChessEngine {
 		if (!is_in_check(is_white)) return false;
 		auto moves = generate_all_moves();
 		return moves.empty();
+	}
+	bool Board::can_castle(bool is_white, bool kingside) {
+		if (is_white) {
+			if (kingside && !castling_rights.white_kingside) return false;
+			if (!kingside && !castling_rights.white_queenside) return false;
+			// بررسی مسیر آزاد و عدم کیش  
+			int x = 7;
+			if (kingside) {
+				return squares[x][5] == Piece::None &&
+					squares[x][6] == Piece::None &&
+					!is_in_check(true);
+			}
+			else {
+				return squares[x][1] == Piece::None &&
+					squares[x][2] == Piece::None &&
+					squares[x][3] == Piece::None &&
+					!is_in_check(true);
+			}
+		}
+		// منطق مشابه برای سیاه  
+	}
+	// در Board.cpp  
+	void Board::order_moves(std::vector<Move>& moves) {
+		std::sort(moves.begin(), moves.end(), [](const Move& a, const Move& b) {
+			// اولویت به حرکات کیشدهنده یا گرفتن مهرهها  
+			return a.is_capture || a.gives_check > b.is_capture || b.gives_check;
+		});
 	}
 } // namespace ChessEngine

@@ -12,7 +12,8 @@ public:
 		int score;
 		int nodesVisited;
 	};
-
+	// در Search.h  
+	int alpha_beta(Board& board, int depth, int alpha, int beta, bool maximizing_player);
 	Search(Board& board, Evaluator& evaluator);
 
 	SearchResult startSearch(int depth);

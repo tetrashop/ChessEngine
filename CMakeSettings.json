@@ -42,7 +42,7 @@
       ],
       "environments": [
         {
-          "VCPKG_ROOT": "C:/vcpkg" // مسیر vcpkg را اصلاح کنید
+          "VCPKG_ROOT": "C:/microsoft-vcpkg-6f29f12" // مسیر vcpkg را اصلاح کنید
         }
       ]
     },

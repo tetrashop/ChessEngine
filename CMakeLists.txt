@@ -12,3 +12,9 @@ add_executable(chess_engine
     src/main.cpp
     src/Board/Board.cpp
 )
+
+add_executable(chess_engine  
+    src/Board/Board.cpp  
+    src/Board/Board.h  
+    # ...  
+)  

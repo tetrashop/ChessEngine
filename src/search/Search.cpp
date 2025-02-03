@@ -182,3 +182,33 @@ bool Board::is_checkmate(bool is_white) {
 	auto moves = generate_all_moves();
 	return moves.empty();
 }
+// در Search.cpp  
+int alpha_beta(Board& board, int depth, int alpha, int beta, bool maximizing_player) {
+	if (depth == 0 || board.is_checkmate(maximizing_player)) {
+		return board.evaluate();
+	}
+
+	auto moves = board.generate_all_moves();
+	if (maximizing_player) {
+		int value = -9999;
+		for (const auto& move : moves) {
+			Board new_board = board;
+			new_board.apply_move(move);
+			value = std::max(value, alpha_beta(new_board, depth - 1, alpha, beta, false));
+			alpha = std::max(alpha, value);
+			if (beta <= alpha) break; // هرس  
+		}
+		return value;
+	}
+	else {
+		int value = 9999;
+		for (const auto& move : moves) {
+			Board new_board = board;
+			new_board.apply_move(move);
+			value = std::min(value, alpha_beta(new_board, depth - 1, alpha, beta, true));
+			beta = std::min(beta, value);
+			if (beta <= alpha) break; // هرس  
+		}
+		return value;
+	}
+}

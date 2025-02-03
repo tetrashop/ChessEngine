@@ -19,7 +19,13 @@ namespace ChessEngine {
 		WhitePawn, WhiteKnight, WhiteBishop, WhiteRook, WhiteQueen, WhiteKing,
 		BlackPawn, BlackKnight, BlackBishop, BlackRook, BlackQueen, BlackKing
 	};
-
+	// در Board.h  
+	struct CastlingRights {
+		bool white_kingside = true;
+		bool white_queenside = true;
+		bool black_kingside = true;
+		bool black_queenside = true;
+	};
 	// رنگ بازیکن
 	enum class Color { White, Black, None };
 
@@ -44,6 +50,10 @@ namespace ChessEngine {
 		bool is_in_check(bool is_white);
 		bool is_move_legal(const Move& move);
 		bool is_checkmate(bool is_white);
+		std::optional<std::pair<int, int>> en_passant_target; // موقعیت پیاده قابل آنپاسان  
+		CastlingRights castling_rights;
+
+		
 
 		void set_from_fen(const std::string& fen) {
 			// پیادهسازی سادهی FEN Parser برای موقعیت شروع
