@@ -5,7 +5,7 @@
 #include <vector>
 #include <string>
 #include <cstdint>
-
+#include <immintrin.h>
 namespace ChessEngine {
 	// در Board.h  
 #include <vector>  
@@ -36,6 +36,14 @@ namespace ChessEngine {
 	class Board {
 	public:
 		Board();
+		uint64_t pawns;
+		uint64_t knights;
+		uint64_t bishops;
+		uint64_t rooks;
+		uint64_t queens;
+		uint64_t kings;
+		uint64_t white;  // تمام مهرههای سفید  
+		uint64_t black;  // تمام مهرههای سیاه  
 		std::vector<Move> generate_pawn_moves(int x, int y);
 		std::array<std::array<Piece, 8>, 8> squares;
 		std::vector<Move> generate_knight_moves(int x, int y);
@@ -52,6 +60,7 @@ namespace ChessEngine {
 		bool is_checkmate(bool is_white);
 		std::optional<std::pair<int, int>> en_passant_target; // موقعیت پیاده قابل آنپاسان  
 		CastlingRights castling_rights;
+		std::optional<std::pair<int, int>> en_passant_target; // موقعیت پیاده هدف برای آنپاسان  
 
 		
 

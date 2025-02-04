@@ -214,8 +214,14 @@ namespace ChessEngine {
 		}
 		return moves;
 	}
+	
+
 	// در Board.cpp  
 	std::vector<Move> Board::generate_pawn_moves(int x, int y) {
+		uint64_t white_pawns = pawns & white;
+		uint64_t single_push = (white_pawns << 8) & ~(white | black);
+		uint64_t double_push = ((single_push & 0x0000000000FF0000) << 8) & ~(white | black);
+
 		std::vector<Move> moves;
 		Piece piece = squares[x][y];
 
@@ -306,46 +312,44 @@ namespace ChessEngine {
 	}
 	void Board::apply_move(const Move& move) {
 		// ...  
-		// پردازش آنپاسان  
-		if (move.is_en_passant) {
-			int target_pawn_x = move.from_x; // برای سفید: x + 1، برای سیاه: x - 1  
-			squares[target_pawn_x][move.to_y] = Piece::None;
+		// غیرفعال کردن حقوق قلعه پس از حرکت شاه یا رخ  
+		if (piece_moved == Piece::WhiteKing) {
+			castling_rights.white_kingside = false;
+			castling_rights.white_queenside = false;
+		}
+		else if (piece_moved == Piece::WhiteRook) {
+			if (move.from_y == 0) castling_rights.white_queenside = false;
+			if (move.from_y == 7) castling_rights.white_kingside = false;
+		}
+		// ... (منطق مشابه برای سیاه)  
+		if (piece_moved == Piece::BlackKing) {
+			castling_rights.black_kingside = false;
+			castling_rights.black_queenside = false;
+		}
+		else if (piece_moved == Piece::BlackRook) {
+			if (move.from_y == 0) castling_rights.black_queenside = false;
+			if (move.from_y == 7) castling_rights.black_kingside = false;
 		}
 	}
 
-	
-	// در generate_pawn_moves()  
-	std::vector<Move> Board::generate_pawn_moves(int x, int y) {
-		std::vector<Move> raw_moves = ...; // همان کد قبلی  
-		std::vector<Move> legal_moves;
-		for (const auto& move : raw_moves) {
-			if (is_move_legal(move)) {
-				legal_moves.push_back(move);
-			}
-		}
-		// در generate_pawn_moves()  
+	bool Board::can_castle(bool is_white, bool kingside) {
 		if (is_white) {
-			
-			// بررسی امکان آنپاسان  
-			if (en_passant_target.has_value()) {
-				int ep_x = en_passant_target->first;
-				int ep_y = en_passant_target->second;
-				if ((is_white && x == ep_x + 1 && (y == ep_y - 1 || y == ep_y + 1)) ||
-					(!is_white && x == ep_x - 1 && (y == ep_y - 1 || y == ep_y + 1))) {
-					moves.push_back({ x, y, ep_x, ep_y, /* is_en_passant */ true });
-				}
+			if (kingside && !castling_rights.white_kingside) return false;
+			// بررسی مسیر و عدم کیش  
+			int x = 7;
+			return squares[x][5] == Piece::None &&
+				squares[x][6] == Piece::None &&
+				!is_in_check(is_white);
+		}else
+			{
+				if (kingside && !castling_rights.black_kingside) return false;
+				// بررسی مسیر و عدم کیش  
+				int x = 7;
+				return squares[x][5] == Piece::None &&
+					squares[x][6] == Piece::None &&
+					!is_in_check(!is_white);
 			}
-		}
-
-		// در generate_king_moves()  
-// قلعه شاهسوی سفید  
-		if (castling_rights.white_kingside &&
-			squares[7][5] == Piece::None &&
-			squares[7][6] == Piece::None &&
-			!is_in_check(true)) {
-			moves.push_back({ 7, 4, 7, 6 }); // e1g1  
-		}
-		return legal_moves;
+		// ... (منطق مشابه برای سیاه)  
 	}
 #include "Board.h"  
 #include <algorithm>  
@@ -418,5 +422,56 @@ namespace ChessEngine {
 			// اولویت به حرکات کیشدهنده یا گرفتن مهرهها  
 			return a.is_capture || a.gives_check > b.is_capture || b.gives_check;
 		});
+	}
+	void Board::set_from_fen(const std::string& fen) {
+		pawns = 0;
+		knights = 0;
+		// ... (پر کردن Bitboardها بر اساس FEN)  
+	}
+#include <immintrin.h>  
+
+#include <immintrin.h> // برای دستورات AVX/SSE  
+
+	int Board::evaluate() {
+		// مقادیر پایه مهره‌ها (پیاده=100، اسب=300، فیل=300، رخ=500، وزیر=900)  
+		const __m256i piece_values = _mm256_setr_epi32(
+			100, 300, 300, 500, 900, 0, 0, 0
+		);
+
+		// جمع‌کننده‌های برداری برای سفید و سیاه  
+		__m256i white_sum = _mm256_setzero_si256();
+		__m256i black_sum = _mm256_setzero_si256();
+
+		// بررسی ۸ خانه همزمان (بهینه برای AVX2)  
+		for (int i = 0; i < 64; i += 8) {
+			// بارگذاری ۸ مهره از حافظه (هر سلول ۴ بایت)  
+			__m256i pieces = _mm256_loadu_si256(
+				reinterpret_cast<const __m256i*>(&squares[i])
+			);
+
+			// جداسازی رنگ مهره‌ها (بیت ۴)  
+			__m256i color_mask = _mm256_set1_epi32(0x10);
+			__m256i is_white = _mm256_and_si256(pieces, color_mask);
+
+			// جداسازی نوع مهره (بیت‌های 0-3)  
+			__m256i piece_type = _mm256_and_si256(pieces, _mm256_set1_epi32(0x0F));
+
+			// تبدیل نوع مهره به مقادیر امتیازی  
+			__m256i values = _mm256_shuffle_epi8(piece_values, piece_type);
+
+			// جمع‌کردن امتیازها بر اساس رنگ  
+			white_sum = _mm256_add_epi32(white_sum, _mm256_and_si256(values, _mm256_cmpeq_epi32(is_white, color_mask)));
+			black_sum = _mm256_add_epi32(black_sum, _mm256_andnot_si256(_mm256_cmpeq_epi32(is_white, color_mask), values));
+		}
+
+		// جمع نهایی برداری به اسکالر  
+		int white_total[8], black_total[8];
+		_mm256_storeu_si256(reinterpret_cast<__m256i*>(white_total), white_sum);
+		_mm256_storeu_si256(reinterpret_cast<__m256i*>(black_total), black_sum);
+
+		return (white_total[0] + white_total[1] + white_total[2] + white_total[3] +
+			white_total[4] + white_total[5] + white_total[6] + white_total[7]) -
+			(black_total[0] + black_total[1] + black_total[2] + black_total[3] +
+				black_total[4] + black_total[5] + black_total[6] + black_total[7]);
 	}
 } // namespace ChessEngine

@@ -1,4 +1,5 @@
-﻿include(FetchContent)
+﻿cmake_minimum_required(VERSION 3.31.4)
+include(FetchContent)
 FetchContent_Declare(
     googletest
     URL https://github.com/google/googletest/archive/refs/heads/main.zip

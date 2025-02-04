@@ -184,7 +184,7 @@ bool Board::is_checkmate(bool is_white) {
 }
 // در Search.cpp  
 int alpha_beta(Board& board, int depth, int alpha, int beta, bool maximizing_player) {
-	if (depth == 0 || board.is_checkmate(maximizing_player)) {
+	if (depth == 0 || board.is_checkmate(!maximizing_player)) {
 		return board.evaluate();
 	}
 
@@ -211,4 +211,5 @@ int alpha_beta(Board& board, int depth, int alpha, int beta, bool maximizing_pla
 		}
 		return value;
 	}
+}
 }
