@@ -1,4 +1,4 @@
-﻿cmake_minimum_required(VERSION 3.31.4)
+﻿cmake_minimum_required(VERSION 3.12.18081601-MSVC_2)
 project(ChessEngine LANGUAGES CXX)
 
 # تنظیمات کامپایلر

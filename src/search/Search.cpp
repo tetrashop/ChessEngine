@@ -212,4 +212,30 @@ int alpha_beta(Board& board, int depth, int alpha, int beta, bool maximizing_pla
 		return value;
 	}
 }
+void parallel_search(Board board, int depth, int thread_count) {
+	std::vector<std::thread> threads;
+	auto moves = board.generate_all_moves();
+	for (int i = 0; i < thread_count; i++) {
+		threads.emplace_back([&, i]() {
+			Board local_board = board;
+			alpha_beta(local_board, depth, -INF, INF, true, false);
+		});
+	}
+	for (auto& t : threads) t.join();
+}
+int quiescence(Board& board, int alpha, int beta) {
+	int stand_pat = board.evaluate();
+	if (stand_pat >= beta) return beta;
+	if (stand_pat > alpha) alpha = stand_pat;
+
+	auto captures = board.generate_captures();
+	for (const auto& move : captures) {
+		Board new_board = board;
+		new_board.apply_move(move);
+		int score = -quiescence(new_board, -beta, -alpha);
+		if (score >= beta) return beta;
+		if (score > alpha) alpha = score;
+	}
+	return alpha;
+}
 }

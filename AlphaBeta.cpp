@@ -1,73 +1,88 @@
-// AlphaBeta.cpp
+ï»¿// AlphaBeta.cpp
 #include <vector>
 #include <climits>
 
 class AlphaBeta {
 public:
-	// ÓÇÎÊÇÑ ÈÑÇ? äãÇ?Ô ?˜ ÍÑ˜Ê
+	// Ø³Ø§Ø®ØªØ§Ø± Ø¨Ø±Ø§? Ù†Ù…Ø§?Ø´ ?Ú© Ø­Ø±Ú©Øª
 	struct Move {
 		int score;
-		// ÓÇ?Ñ ÇÑÇãÊÑåÇ? ãÑÈæØ Èå ÍÑ˜Ê
+		// Ø³Ø§?Ø± Ù¾Ø§Ø±Ø§Ù…ØªØ±Ù‡Ø§? Ù…Ø±Ø¨ÙˆØ· Ø¨Ù‡ Ø­Ø±Ú©Øª
 	};
 
 	AlphaBeta() {} // Constructor
 
-	// ÊÇÈÚ ÇÑÒ?ÇÈ? æÖÚ?Ê ÈÇÒ? (ãÊäÇÓÈ ÈÇ ÈÇÒ? ÔãÇ ÈÇ?Ï ?ÇÏåÓÇÒ? ÔæÏ)
+	// ØªØ§Ø¨Ø¹ Ø§Ø±Ø²?Ø§Ø¨? ÙˆØ¶Ø¹?Øª Ø¨Ø§Ø²? (Ù…ØªÙ†Ø§Ø³Ø¨ Ø¨Ø§ Ø¨Ø§Ø²? Ø´Ù…Ø§ Ø¨Ø§?Ø¯ Ù¾?Ø§Ø¯Ù‡â€ŒØ³Ø§Ø²? Ø´ÙˆØ¯)
 	int evaluatePosition() {
-		// ãäØŞ ÇÑÒ?ÇÈ?
+		// Ù…Ù†Ø·Ù‚ Ø§Ø±Ø²?Ø§Ø¨?
 		return 0;
+	}int alpha_beta(Board& board, int depth, int alpha, int beta, bool maximizing, bool quiesce) {
+		if (depth == 0) {
+			if (quiesce) return board.evaluate();
+			// Ø§Ø¯Ø§Ù…Ù‡ Ø¬Ø³ØªØ¬Ùˆ Ø¯Ø± Ø­Ø±Ú©Ø§Øª Ø®Ø´Ù† (Ú©ÛŒØ´/Ú¯Ø±ÙØªÙ† Ù…Ù‡Ø±Ù‡)  
+			auto captures = board.generate_captures();
+			for (const auto& move : captures) {
+				Board new_board = board;
+				new_board.apply_move(move);
+				int score = -alpha_beta(new_board, 1, -beta, -alpha, !maximizing, true);
+				alpha = std::max(alpha, score);
+				if (alpha >= beta) break;
+			}
+			return alpha;
+		}
+		// ... Ù…Ù†Ø·Ù‚ Alpha-Beta Ù…Ø¹Ù…ÙˆÙ„ÛŒ  
 	}
 
-	// ÇáæÑ?Êã ÂáİÇ-ÈÊÇ
+	// Ø§Ù„Ú¯ÙˆØ±?ØªÙ… Ø¢Ù„ÙØ§-Ø¨ØªØ§
 	int alphaBeta(int depth, int alpha, int beta, bool maximizingPlayer) {
-		if (depth == 0 /* ?Ç ÔÑØ Ç?Çä ÈÇÒ? */) {
+		if (depth == 0 /* ?Ø§ Ø´Ø±Ø· Ù¾Ø§?Ø§Ù† Ø¨Ø§Ø²? */) {
 			return evaluatePosition();
 		}
 
 		if (maximizingPlayer) {
 			int maxEval = INT_MIN;
 			for (auto& move : generatePossibleMoves()) {
-				// ÇäÌÇã ÍÑ˜Ê
+				// Ø§Ù†Ø¬Ø§Ù… Ø­Ø±Ú©Øª
 				int eval = alphaBeta(depth - 1, alpha, beta, false);
 				maxEval = std::max(maxEval, eval);
 				alpha = std::max(alpha, eval);
-				// ÈÇÒÑÏÇäÏä ÍÑ˜Ê
+				// Ø¨Ø§Ø²Ú¯Ø±Ø¯Ø§Ù†Ø¯Ù† Ø­Ø±Ú©Øª
 				if (beta <= alpha)
-					break; // ŞØÚ ÂáİÇ-ÈÊÇ
+					break; // Ù‚Ø·Ø¹ Ø¢Ù„ÙØ§-Ø¨ØªØ§
 			}
 			return maxEval;
 		}
 		else {
 			int minEval = INT_MAX;
 			for (auto& move : generatePossibleMoves()) {
-				// ÇäÌÇã ÍÑ˜Ê
+				// Ø§Ù†Ø¬Ø§Ù… Ø­Ø±Ú©Øª
 				int eval = alphaBeta(depth - 1, alpha, beta, true);
 				minEval = std::min(minEval, eval);
 				beta = std::min(beta, eval);
-				// ÈÇÒÑÏÇäÏä ÍÑ˜Ê
+				// Ø¨Ø§Ø²Ú¯Ø±Ø¯Ø§Ù†Ø¯Ù† Ø­Ø±Ú©Øª
 				if (beta <= alpha)
-					break; // ŞØÚ ÂáİÇ-ÈÊÇ
+					break; // Ù‚Ø·Ø¹ Ø¢Ù„ÙØ§-Ø¨ØªØ§
 			}
 			return minEval;
 		}
 
 	}
 
-	// Êæá?Ï ÍÑ˜ÇÊ ãã˜ä (ÈÇ?Ï ãÊäÇÓÈ ÈÇ ÈÇÒ? ÔãÇ ?ÇÏåÓÇÒ? ÔæÏ)
+	// ØªÙˆÙ„?Ø¯ Ø­Ø±Ú©Ø§Øª Ù…Ù…Ú©Ù† (Ø¨Ø§?Ø¯ Ù…ØªÙ†Ø§Ø³Ø¨ Ø¨Ø§ Ø¨Ø§Ø²? Ø´Ù…Ø§ Ù¾?Ø§Ø¯Ù‡â€ŒØ³Ø§Ø²? Ø´ÙˆØ¯)
 	std::vector<Move> generatePossibleMoves() {
 		std::vector<Move> moves;
-		// ãäØŞ Êæá?Ï ÍÑ˜ÇÊ
+		// Ù…Ù†Ø·Ù‚ ØªÙˆÙ„?Ø¯ Ø­Ø±Ú©Ø§Øª
 		return moves;
 	}
 
-	// ÊÇÈÚ ÇÕá? ÈÑÇ? ÏÑ?ÇİÊ ÈåÊÑ?ä ÍÑ˜Ê
+	// ØªØ§Ø¨Ø¹ Ø§ØµÙ„? Ø¨Ø±Ø§? Ø¯Ø±?Ø§ÙØª Ø¨Ù‡ØªØ±?Ù† Ø­Ø±Ú©Øª
 	Move getBestMove(int depth) {
 		Move bestMove;
 		int bestValue = INT_MIN;
 		for (auto& move : generatePossibleMoves()) {
-			// ÇäÌÇã ÍÑ˜Ê
+			// Ø§Ù†Ø¬Ø§Ù… Ø­Ø±Ú©Øª
 			int moveValue = alphaBeta(depth, INT_MIN, INT_MAX, false);
-			// ÈÇÒÑÏÇäÏä ÍÑ˜Ê
+			// Ø¨Ø§Ø²Ú¯Ø±Ø¯Ø§Ù†Ø¯Ù† Ø­Ø±Ú©Øª
 
 			if (moveValue > bestValue) {
 				bestValue = moveValue;

@@ -307,7 +307,13 @@ int main() {
 		std::cout << "Total: " << totalProgress << "% | "
 			<< "Task: " << task.name << " (" << task.progress << "%)\n";
 	};
+	// در تابع main  
 	Board board;
+	board.set_from_fen("startpos");
+	auto start = std::chrono::high_resolution_clock::now();
+	int score = board.evaluate();
+	auto end = std::chrono::high_resolution_clock::now();
+	std::cout << "Evaluation time: " << (end - start).count() << " ns\n";  
 	UCIHandler uci;
 	std::string cmd;
 	while (std::getline(std::cin, cmd)) {
