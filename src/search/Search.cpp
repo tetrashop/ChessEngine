@@ -212,24 +212,29 @@ int alpha_beta(Board& board, int depth, int alpha, int beta, bool maximizing_pla
 		return value;
 	}
 }
-void parallel_search(Board board, int depth, int thread_count) {
-	std::vector<std::thread> threads;
+// در Search.cpp  
+void Search::parallel_search(Board& board, int depth, int threads) {
+	std::vector<std::thread> workers;
 	auto moves = board.generate_all_moves();
-	for (int i = 0; i < thread_count; i++) {
-		threads.emplace_back([&, i]() {
+
+	for (int i = 0; i < threads; i++) {
+		workers.emplace_back([&, i]() {
 			Board local_board = board;
-			alpha_beta(local_board, depth, -INF, INF, true, false);
+			alpha_beta(local_board, depth, -INF, INF, true);
 		});
 	}
-	for (auto& t : threads) t.join();
+
+	for (auto& thread : workers) thread.join();
 }
-int quiescence(Board& board, int alpha, int beta) {
+int Search::quiescence(Board& board, int alpha, int beta) {
+	// ارزیابی اولیه موقعیت  
 	int stand_pat = board.evaluate();
 	if (stand_pat >= beta) return beta;
 	if (stand_pat > alpha) alpha = stand_pat;
 
+	// تولید حرکات خشن (کیش/گرفتن مهره)  
 	auto captures = board.generate_captures();
-	for (const auto& move : captures) {
+	for (const Move& move : captures) {
 		Board new_board = board;
 		new_board.apply_move(move);
 		int score = -quiescence(new_board, -beta, -alpha);

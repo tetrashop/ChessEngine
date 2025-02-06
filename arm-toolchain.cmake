@@ -10,3 +10,4 @@ set(CMAKE_CXX_COMPILER "${TOOLCHAIN_PATH}/arm-none-eabi-g++.exe")
 # تنظیمات کامپایلر
 set(CMAKE_C_FLAGS "-nostartfiles" CACHE STRING "C Flags")
 set(CMAKE_CXX_FLAGS "-nostartfiles -fno-rtti -fno-exceptions" CACHE STRING "C++ Flags")
+set(CMAKE_TOOLCHAIN_FILE "C:/vcpkg/scripts/buildsystems/vcpkg.cmake")  

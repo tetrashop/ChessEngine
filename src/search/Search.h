@@ -58,13 +58,23 @@ private:
 
 	int alphaBeta(Board& board, int depth, int alpha, int beta, bool maximizingPlayer);
 };
+// در Search.h  
+
 struct TranspositionTableEntry {
-	int depth;
+	uint64_t hash;
 	int score;
-	Flag flag; // EXACT, LOWER_BOUND, UPPER_BOUND
+	int depth;
+	enum Flag { EXACT, LOWER_BOUND, UPPER_BOUND } flag;
 };
 
+
+
+
 class TranspositionTable {
+private:
+	std::unordered_map<uint64_t, TranspositionEntry> table;
+	std::shared_mutex mutex;
+
 public:
 	void save(uint64_t hash, const TranspositionTableEntry& entry);
 	std::optional<TranspositionTableEntry> probe(uint64_t hash);
@@ -72,6 +82,15 @@ public:
 		int standPat = evaluate();
 		if (standPat >= beta) return beta;
 		// ...
+	}
+	void store(uint64_t hash, int score, int depth, TranspositionEntry::Flag flag) {
+		std::unique_lock lock(mutex);
+		table[hash] = { hash, score, depth, flag };
+	}
+
+	TranspositionEntry probe(uint64_t hash) {
+		std::shared_lock lock(mutex);
+		return table.count(hash) ? table[hash] : TranspositionEntry{ 0, 0, 0, TranspositionEntry::EXACT };
 	}
 
 private:

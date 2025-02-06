@@ -1,4 +1,5 @@
-﻿cmake_minimum_required(VERSION 3.12.18081601-MSVC_2)
+﻿cmake_minimum_required(VERSION 3.12)
+cmake_policy(VERSION 3.16)
 project(ChessEngine LANGUAGES CXX)
 
 # تنظیمات کامپایلر
@@ -18,3 +19,4 @@ add_executable(chess_engine
     src/Board/Board.h  
     # ...  
 )  
+set(CMAKE_TOOLCHAIN_FILE "C:/vcpkg/scripts/buildsystems/vcpkg.cmake")  
