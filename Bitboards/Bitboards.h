@@ -10,8 +10,6 @@ namespace ChessEngine {
 	public:
 		enum class Piece { Pawn, Knight, Bishop, Rook, Queen, King, None };
 
-		class Bitboards {
-		public:
 			// تعریف رنکها و فایلها
 			static constexpr Bitboard Rank1 = 0x00000000000000FF;
 			static constexpr Bitboard FileA = 0x0101010101010101;
@@ -117,9 +115,9 @@ namespace ChessEngine {
 			return attacks;
 		}();
 
-	} // namespace ChessEngine
-
+	
 	};
 
+} // namespace ChessEngine
 	// پیش‌محاسبه حملات اسب (مقداردهی خارج از کلاس)
 	

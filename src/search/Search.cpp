@@ -228,7 +228,7 @@ void Search::parallel_search(Board& board, int depth, int threads) {
 }
 int Search::quiescence(Board& board, int alpha, int beta) {
 	// ارزیابی اولیه موقعیت  
-	int stand_pat = board.evaluate();
+	int stand_pat = evaluator.evaluate(board);
 	if (stand_pat >= beta) return beta;
 	if (stand_pat > alpha) alpha = stand_pat;
 
@@ -241,6 +241,34 @@ int Search::quiescence(Board& board, int alpha, int beta) {
 		if (score >= beta) return beta;
 		if (score > alpha) alpha = score;
 	}
+
+	// تولید حرکات کیش + گرفتن مهره
+	auto aggressiveMoves = board.generateAggressiveMoves();
+	for (const Move& move : aggressiveMoves) {
+		board.makeMove(move);
+		int score = -quiescence(board, -beta, -alpha);
+		board.unmakeMove(move);
+		auto checks = board.generateChecks(); // اضافه کردن حرکات کیش
+
+		// ...
+	}
 	return alpha;
+	
+}
+
+// در Search.cpp
+Move Search::findBestMoveWithTimeControl(int maxDepth, int maxTimeMs) {
+	auto start = std::chrono::steady_clock::now();
+	Move bestMove;
+	for (int depth = 1; depth <= maxDepth; depth++) {
+		if (std::chrono::duration_cast<std::chrono::milliseconds>(...).count() > maxTimeMs)
+			break;
+		bestMove = alphaBetaRoot(depth);
+	}
+	return bestMove;
+}
+// در Search.cpp
+void Search::lazySMP() {
+	// هر Thread با عمق متفاوت جستجو می‌کند
 }
 }

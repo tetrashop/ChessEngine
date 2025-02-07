@@ -46,7 +46,7 @@ namespace ChessEngine {
 	std::vector<Move> Board::generateLegalMoves() const {
 		return MoveGenerator::generateLegalMoves(*this);
 	}
-
+	
 	void Board::makeMove(const Move& move) {
 		// ذخیره تاریخچه برای undo
 		MoveHistory history;
@@ -60,6 +60,9 @@ namespace ChessEngine {
 		m_squares[move.to] = m_squares[move.from];
 		m_squares[move.from] = Piece::None;
 
+		if (move.type == MoveType::EnPassant) {
+			// حذف پیاده حریف
+		}
 		// پردازش حرکات خاص
 		if (move.type == MoveType::Castling) {
 			// حرکت قلعه
@@ -473,5 +476,23 @@ namespace ChessEngine {
 			white_total[4] + white_total[5] + white_total[6] + white_total[7]) -
 			(black_total[0] + black_total[1] + black_total[2] + black_total[3] +
 				black_total[4] + black_total[5] + black_total[6] + black_total[7]);
+	}
+	void makeMove(Move move) {
+		// به‌روزرسانی Bitboardها با عملیات بیتی
+		pawns &= ~(1ULL << move.from);
+		pawns |= (1ULL << move.to);
+	}
+	
+}
+	// در Search.cpp
+	void Search::lazySMP(int depth) {
+		std::vector<std::thread> threads;
+		for (int i = 0; i < numThreads; i++) {
+			threads.emplace_back([this, depth]() {
+				// هر ترد جستجو را با عمق متفاوت شروع می‌کند
+				alphaBeta(depth + threadId, ...);
+			});
+		}
+		// ...
 	}
 } // namespace ChessEngine

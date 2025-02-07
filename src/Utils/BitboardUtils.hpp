@@ -31,7 +31,7 @@ namespace BitboardUtils {
 
 namespace BitboardUtils {
 
-	// محاسبه تعداد مهرهها در یک Bitboard
+		// محاسبه تعداد مهرهها در یک Bitboard
 	inline int countBits(uint64_t bb) {
 		return __builtin_popcountll(bb);
 	}
@@ -54,3 +54,8 @@ namespace BitboardUtils {
 	uint64_t bishopAttacks(uint64_t bishops, uint64_t occupied);
 
 } // namespace BitboardUtils
+// در BitboardUtils.cpp
+namespace ChessEngine {
+	// حذف تعریف تکراری کلاس Bitboards
+	constexpr Bitboard knightAttacks[64] = { /*...*/ }; // فقط جداول پیش‌محاسبه شده باقی بمانند
+}

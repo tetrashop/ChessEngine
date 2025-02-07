@@ -68,14 +68,25 @@ struct TranspositionTableEntry {
 };
 
 
-
-
 class TranspositionTable {
 private:
 	std::unordered_map<uint64_t, TranspositionEntry> table;
 	std::shared_mutex mutex;
-
+	std::unordered_map<uint64_t, TTEntry> table;
 public:
+	struct Entry { uint64_t key; int score; int depth; };
+	std::unordered_map<uint64_t, Entry> table;
+	struct Entry {
+		uint64_t key;
+		int score;
+		int depth;
+		// ...
+	};
+	std::unordered_map<uint64_t, Entry> table;
+
+	void store(uint64_t key, int score, int depth) { /*...*/ }
+	Entry* probe(uint64_t key) { /*...*/ }
+
 	void save(uint64_t hash, const TranspositionTableEntry& entry);
 	std::optional<TranspositionTableEntry> probe(uint64_t hash);
 	int quiescence(...) {

@@ -3,6 +3,8 @@
 
 class Zobrist {
 public:
+	// در Zobrist.h
+	extern uint64_t zobristKeys[12][64]; // 12 نوع مهره × 64 خانه
 	static void init();
 	static uint64_t computeHash(const ChessBoard& board);
 

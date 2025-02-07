@@ -2,6 +2,9 @@
 #define MOVE_H
 
 #include <string>
+#pragma once  
+#include <string>  
+
 
 // موقعیت روی صفحه شطرنج (ردیف و ستون)
 struct Position {
@@ -39,6 +42,13 @@ private:
 	PieceType promotion;  // نوع مهره ارتقاء (برای پیاده)
 	MoveFlag flag;        // پرچم حرکت خاص
 
+	int from_x, from_y;
+	int to_x, to_y;
+	std::string to_string() const {
+		const char cols[] = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' };
+		return std::string(1, cols[from_y]) + std::to_string(8 - from_x) +
+			std::string(1, cols[to_y]) + std::to_string(8 - to_x);
+	}
 public:
 	// سازنده‌ها
 	Move();
@@ -69,16 +79,5 @@ public:
 	bool operator==(const Move& other) const;
 	bool operator!=(const Move& other) const;
 };
-#pragma once  
-#include <string>  
 
-struct Move {
-	int from_x, from_y;
-	int to_x, to_y;
-	std::string to_string() const {
-		const char cols[] = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' };
-		return std::string(1, cols[from_y]) + std::to_string(8 - from_x) +
-			std::string(1, cols[to_y]) + std::to_string(8 - to_x);
-	}
-};
 #endif

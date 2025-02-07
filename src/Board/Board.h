@@ -31,19 +31,19 @@ namespace ChessEngine {
 
 	// موقعیت مهره‌ها با استفاده از Bitboard (بهینه‌سازی)
 	using Bitboard = uint64_t;
-
 	// کلاس اصلی صفحه شطرنج
 	class Board {
 	public:
 		Board();
-		uint64_t pawns;
-		uint64_t knights;
-		uint64_t bishops;
+		uint64_t pawns = 0;
+		uint64_t knights = 0;
+		uint64_t bishops = 0;
 		uint64_t rooks;
 		uint64_t queens;
 		uint64_t kings;
 		uint64_t white;  // تمام مهرههای سفید  
 		uint64_t black;  // تمام مهرههای سیاه  
+	
 		std::vector<Move> generate_pawn_moves(int x, int y);
 		std::array<std::array<Piece, 8>, 8> squares;
 		std::vector<Move> generate_knight_moves(int x, int y);

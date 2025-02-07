@@ -10,6 +10,13 @@ public:
 		// سا?ر پارامترها? مربوط به حرکت
 	};
 
+	// در AlphaBeta
+	Entry* entry = tt.probe(zobristKey);
+	if (entry != nullptr && entry->depth >= depth) {
+		return entry->score;
+	}
+
+
 	AlphaBeta() {} // Constructor
 
 	// تابع ارز?اب? وضع?ت باز? (متناسب با باز? شما با?د پ?اده‌ساز? شود)
@@ -38,6 +45,7 @@ public:
 		if (depth == 0 /* ?ا شرط پا?ان باز? */) {
 			return evaluatePosition();
 		}
+		if (depth > 2 && moveCount > 4) depth--; // کاهش عمق برای حرکات دیررس
 
 		if (maximizingPlayer) {
 			int maxEval = INT_MIN;

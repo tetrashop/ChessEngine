@@ -29,14 +29,12 @@ int Evaluator::Evaluate(const Board& board) {
 	return score;
 }
 // در Evaluator.cpp
-int evaluatePawnStructure(...) {
-	// جریمه پیاده‌های ایزوله/دوگانه
+int Evaluator::evaluatePawnStructure(const Board& board, Color color)	// جریمه پیاده‌های ایزوله/دوگانه
 	score -= isolatedPawns * 15;
 	score -= doubledPawns * 10;
 }
 // در Evaluator.cpp
-int evaluatePawnStructure(...) {
-	// جریمه پیاده‌های ایزوله/دوگانه
-	score -= isolatedPawns * 15;
-	score -= doubledPawns * 10;
+int Evaluator::evaluatePawnStructure(const Board& board, Color color) { // اضافه کردن پارامترها
+	// منطق
 }
+// در Evaluator.cpp

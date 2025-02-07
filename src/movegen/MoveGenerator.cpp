@@ -1,4 +1,7 @@
 ﻿#include "MoveGenerator.h"
+// در MoveGenerator.cpp
+#include "../utils/LookupTables.h"
+
 #include "Board.h"
 #include <bitset>
 #include <algorithm>
@@ -10,6 +13,10 @@ namespace ChessEngine {
 
 	// جدول از پیش محاسبه‌شده برای حرکت شاه
 	constexpr Bitboard kingAttacks[64] = { /* ... */ };
+
+	// در MoveGenerator.cpp
+	uint64_t knightAttacks = precomputedKnightAttacks[square];
+
 
 	std::vector<Move> MoveGenerator::generateLegalMoves(const Board& board) {
 		std::vector<Move> moves = generatePseudoLegalMoves(board);
@@ -91,6 +98,8 @@ namespace ChessEngine {
 
 	class MoveGenerator {
 	public:
+		
+		
 		static void generateBishopMoves(const ChessBoard& board, int row, int col, std::vector<Move>& moves) {
 			// جهت‌های حرکت فیل (۴ جهت قطری)
 			const int directions[4][2] = { {1,1}, {1,-1}, {-1,1}, {-1,-1} };
@@ -299,4 +308,7 @@ std::vector<Move> MoveGenerator::GenerateEnPassantMoves(const ChessBoard& board,
 		moves.emplace_back(MoveType::EnPassant, Square{ row, col }, target);
 	}
 	return moves;
+}
+uint64_t MoveGenerator::generateKnightAttacks(Square sq) {
+	return precomputedKnightAttacks[sq]; // استفاده از جدول پیش‌محاسبه شده
 }
