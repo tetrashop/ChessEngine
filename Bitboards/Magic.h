@@ -13,9 +13,10 @@ void initMagics() {
 	bishopMagics[0] = { 0x123456789ABCDEF0, 0x007E7E7E7E7E00, /*...*/ };
 	// ...
 }
+// در Magic.cpp
 Bitboard getBishopAttacks(Square sq, Bitboard occupancy) {
-	occupancy &= bishopMagics[sq].mask;
-	occupancy *= bishopMagics[sq].magic;
+	occupancy &= bishopMasks[sq];
+	occupancy *= bishopMagics[sq];
 	occupancy >>= 64 - 9; // 9 بیت برای فیل
-	return bishopMagics[sq].attacks[occupancy];
+	return bishopAttacks[sq][occupancy];
 }

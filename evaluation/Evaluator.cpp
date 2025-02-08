@@ -33,8 +33,3 @@ int Evaluator::evaluatePawnStructure(const Board& board, Color color)	// جری�
 	score -= isolatedPawns * 15;
 	score -= doubledPawns * 10;
 }
-// در Evaluator.cpp
-int Evaluator::evaluatePawnStructure(const Board& board, Color color) { // اضافه کردن پارامترها
-	// منطق
-}
-// در Evaluator.cpp

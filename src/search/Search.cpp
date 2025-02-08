@@ -267,30 +267,19 @@ Move Search::findBestMoveWithTimeControl(int maxDepth, int maxTimeMs) {
 	}
 	return bestMove;
 }
-// در Search.cpp
-void Search::lazySMP(int depth) {
-	std::vector<std::thread> threads;
-	for (int i = 0; i < 4; i++) { // 4 هسته
-		threads.emplace_back([this, depth, i]() {
-			alphaBeta(depth + i, ...); // هر ترد با عمق متفاوت
-		});
-	}
-	// ...
-}
+
 // در Search.cpp
 std::atomic<int> bestScore;
 
 void Search::lazySMP(int depth) {
+	
 	bestScore = -INFINITY;
 	std::vector<std::thread> threads;
-
-	for (int i = 0; i < 4; ++i) { // 4 ترد
+	for (int i = 0; i < 4; i++) { // 4 ترد
 		threads.emplace_back([this, depth, i]() {
-			int localScore = alphaBeta(rootBoard, depth + i, ...);
-			if (localScore > bestScore) bestScore = localScore;
+			alphaBeta(depth + i, ...); // جستجو با عمق متفاوت
 		});
 	}
 
 	for (auto& t : threads) t.join();
-}
 }

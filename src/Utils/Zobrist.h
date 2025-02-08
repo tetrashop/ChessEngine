@@ -2,14 +2,19 @@
 #include <cstdint>
 // در Zobrist.h
 #include <random>
-
+// در Zobrist.h
+namespace ChessEngine {
+	e
+}
 namespace ChessEngine {
 class Zobrist {
 public:
-	// در Zobrist.h
-	extern uint64_t zobristKeys[12][64]; // 12 نوع مهره × 64 خانه
-	void initZobrist(); // تولید اعداد تصادفی با std::mt19937_64
-
+	    void initZobrist() {
+		std::mt19937_64 rng(12345);
+		for (int i = 0; i < 12; i++)
+			for (int j = 0; j < 64; j++)
+				zobristKeys[i][j] = rng();
+	}
 	static void init();
 	static uint64_t computeHash(const ChessBoard& board);
 
