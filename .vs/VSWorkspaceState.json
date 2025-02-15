@@ -3,15 +3,14 @@
     "",
     "\\build",
     "\\build\\Windows-Debug",
-    "\\build\\Windows-Debug\\CMakeFiles",
-    "\\build\\Windows-Debug\\CMakeFiles\\3.12.18081601-MSVC_2",
-    "\\CMakeFiles",
-    "\\CMakeFiles\\3.31.4",
-    "\\CMakeFiles\\3.31.4\\CompilerIdCXX",
-    "\\CMakeFiles\\CMakeScratch",
+    "\\cmake",
+    "\\MoveGenerator",
+    "\\OpeningBook",
+    "\\src",
+    "\\tests",
     "\\_deps",
-    "\\_deps\\googletest-subbuild"
+    "\\_deps\\googletest-subbuild\\Debug",
+    "\\_deps\\googletest-subbuild\\googletest-populate-prefix"
   ],
-  "SelectedNode": "\\_deps\\googletest-subbuild\\ZERO_CHECK.vcxproj",
   "PreviewInSolutionExplorer": false
 }
