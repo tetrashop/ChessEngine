@@ -1,17 +1,17 @@
 {
   "ExpandedNodes": [
     "",
+    "\\build",
+    "\\build\\Windows-Debug",
+    "\\build\\Windows-Debug\\CMakeFiles",
+    "\\build\\Windows-Debug\\CMakeFiles\\3.12.18081601-MSVC_2",
     "\\CMakeFiles",
     "\\CMakeFiles\\3.31.4",
-    "\\CMakeFiles\\3.31.4\\CompilerIdC",
     "\\CMakeFiles\\3.31.4\\CompilerIdCXX",
-    "\\CMakeFiles\\3.31.4\\CompilerIdCXX\\Debug",
-    "\\CMakeFiles\\3.31.4\\CompilerIdCXX\\Debug\\CompilerIdCXX.tlog",
-    "\\CMakeFiles\\3.31.4\\CompilerIdC\\Debug",
-    "\\CMakeFiles\\3.31.4\\CompilerIdC\\Debug\\CompilerIdC.tlog",
-    "\\CMakeFiles\\3.31.4\\Debug",
-    "\\CMakeFiles\\3.31.4\\Debug\\VCTargetsPath.tlog"
+    "\\CMakeFiles\\CMakeScratch",
+    "\\_deps",
+    "\\_deps\\googletest-subbuild"
   ],
-  "SelectedNode": "\\cmake",
+  "SelectedNode": "\\_deps\\googletest-subbuild\\ZERO_CHECK.vcxproj",
   "PreviewInSolutionExplorer": false
 }
