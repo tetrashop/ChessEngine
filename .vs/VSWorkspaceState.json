@@ -1,21 +1,6 @@
 {
   "ExpandedNodes": [
-    "",
-    "\\build",
-    "\\build\\CMakeFiles",
-    "\\build\\CMakeFiles\\3.31.4",
-    "\\build\\CMakeFiles\\3.31.4\\CompilerIdC",
-    "\\build\\CMakeFiles\\3.31.4\\CompilerIdCXX",
-    "\\build\\CMakeFiles\\3.31.4\\CompilerIdCXX\\Debug",
-    "\\build\\CMakeFiles\\3.31.4\\CompilerIdCXX\\Debug\\CompilerIdCXX.tlog",
-    "\\build\\CMakeFiles\\3.31.4\\CompilerIdCXX\\tmp",
-    "\\build\\CMakeFiles\\3.31.4\\CompilerIdC\\Debug",
-    "\\build\\CMakeFiles\\3.31.4\\CompilerIdC\\tmp",
-    "\\build\\CMakeFiles\\3.31.4\\Debug",
-    "\\build\\CMakeFiles\\3.31.4\\Debug\\VCTargetsPath.tlog",
-    "\\build\\CMakeFiles\\pkgRedirects",
-    "\\src"
+    ""
   ],
-  "SelectedNode": "\\src\\main.cpp",
   "PreviewInSolutionExplorer": false
 }
