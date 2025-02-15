@@ -1,6 +1,17 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\CMakeFiles",
+    "\\CMakeFiles\\3.31.4",
+    "\\CMakeFiles\\3.31.4\\CompilerIdC",
+    "\\CMakeFiles\\3.31.4\\CompilerIdCXX",
+    "\\CMakeFiles\\3.31.4\\CompilerIdCXX\\Debug",
+    "\\CMakeFiles\\3.31.4\\CompilerIdCXX\\Debug\\CompilerIdCXX.tlog",
+    "\\CMakeFiles\\3.31.4\\CompilerIdC\\Debug",
+    "\\CMakeFiles\\3.31.4\\CompilerIdC\\Debug\\CompilerIdC.tlog",
+    "\\CMakeFiles\\3.31.4\\Debug",
+    "\\CMakeFiles\\3.31.4\\Debug\\VCTargetsPath.tlog"
   ],
+  "SelectedNode": "\\cmake",
   "PreviewInSolutionExplorer": false
 }
