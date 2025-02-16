@@ -5,6 +5,7 @@
 #include "ChessBoard.h"  
 #include "Zobrist.h" // فرضاً پیادهسازی شده  
 #include <algorithm>
+#include "syzygy/tbprobe.h" // کتابخانه Syzygy
 
 class ChessBoard {
 public:
@@ -277,7 +278,7 @@ bool ChessBoard::canCastle(Color color, bool kingside) const {
 
 	return !isInCheck(color);
 }
-#include "syzygy/tbprobe.h" // کتابخانه Syzygy
+
 
 bool probeSyzygy(const ChessBoard& board, int& result) {
 	unsigned int white = 0, black = 0;

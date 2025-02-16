@@ -7,6 +7,17 @@ namespace ChessEngine {
 	class MoveGenerator {
 	public:
 		static std::vector<Move> generateLegalMoves(Board& board);
+
+	private:
+		static void generatePawnMoves(Board& board, std::vector<Move>& moves);
+		static void generateKnightMoves(Board& board, std::vector<Move>& moves);
+		static void generateBishopMoves(Board& board, std::vector<Move>& moves);
+		static void generateRookMoves(Board& board, std::vector<Move>& moves);
+		static void generateQueenMoves(Board& board, std::vector<Move>& moves);
+		static void generateKingMoves(Board& board, std::vector<Move>& moves);
+		static void generateCastlingMoves(Board& board, std::vector<Move>& moves);
+	public:
+		static std::vector<Move> generateLegalMoves(Board& board);
 		static std::vector<Move> generatePseudoLegalMoves(Board& board);
 
 	private:

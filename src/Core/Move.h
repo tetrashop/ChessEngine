@@ -32,6 +32,18 @@ enum class MoveFlag {
 	Promotion,
 	Capture
 };
+struct Move {
+	Square from;
+	Square to;
+	Piece piece;
+	Piece captured;
+	PieceType promotion = PieceType::None;
+	bool isEnPassant = false;
+	bool isCastling = false;
+
+	std::string toUCI() const;
+	bool operator==(const Move& other) const;
+};
 
 class Move {
 private:

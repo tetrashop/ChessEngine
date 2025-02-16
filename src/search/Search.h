@@ -3,8 +3,17 @@
 #pragma once
 #include "../board/Board.h"
 #include "../evaluation/Evaluator.h"
+#include "Board.h"  
+
 
 class Search {
+		public:
+			static Move findBestMove(Board& board, int depth);
+
+		private:
+			static int alphaBeta(Board& board, int depth, int alpha, int beta, bool maximizing);
+			static int quiescenceSearch(Board& board, int alpha, int beta);
+	
 public:
 	static Move findBestMove(Board& board, int depth);
 
@@ -115,8 +124,6 @@ public:
 private:
 	std::unordered_map<uint64_t, TranspositionTableEntry> table;
 };
-// در Search.h  
-#include "Board.h"  
 struct SearchResult {
 	Move best_move;
 	int score;

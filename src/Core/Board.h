@@ -6,12 +6,16 @@
 #include <string>
 #include <cstdint>
 #include <immintrin.h>
-namespace ChessEngine {
-	// در Board.h  
 #include <vector>  
 #include <string>  
+#pragma once
+#include <optional>
+#include "Piece.h"
+#include "Move.h"
+#include "Zobrist.h"
+namespace ChessEngine {
+	// در Board.h  
 
-	
 
 	// انواع مهره‌ها
 	enum class Piece {
@@ -33,6 +37,131 @@ namespace ChessEngine {
 	using Bitboard = uint64_t;
 	// کلاس اصلی صفحه شطرنج
 	class Board {
+			// انواع وضعیت‌های بازی
+			enum class GameState { Playing, Checkmate, Stalemate, Draw };
+
+			// ساختار حقوق قلعه
+			struct CastlingRights {
+				bool whiteKingside = true;
+				bool whiteQueenside = true;
+				bool blackKingside = true;
+				bool blackQueenside = true;
+			};
+
+			// متغیرهای عضو
+			std::array<uint64_t, 12> pieceBitboards; // [WhitePawn, WhiteKnight,... BlackKing]
+			uint64_t occupied = 0;
+			uint64_t empty = ~0ULL;
+			Color turn = Color::White;
+			CastlingRights castling;
+			std::optional<Square> enPassantTarget;
+			int halfMoveClock = 0;
+			int fullMoveNumber = 1;
+			uint64_t zobristKey = 0;
+			std::vector<MoveHistory> moveHistory;
+
+			// توابع اصلی
+			Board();
+			void setFromFEN(const std::string& fen);
+			std::vector<Move> generateLegalMoves();
+			void makeMove(const Move& move);
+			void undoMove();
+			GameState getGameState() const;
+			std::string toFEN() const;
+
+			// توابع کمکی
+			uint64_t getAttackers(Square sq, Color attackerColor) const;
+			bool isSquareAttacked(Square sq, Color attackerColor) const;
+			bool isInCheck(Color color) const;
+			bool isMoveLegal(const Move& move) const;
+
+		private:
+			// توابع داخلی
+			void clearBoard();
+			void updateOccupancy();
+			void updateZobristKey(const Move& move);
+			void handleCastling(Move& move);
+			void handleEnPassant(Move& move);
+			void handlePromotion(Move& move);
+
+		public:
+			// انواع وضعیت‌های بازی
+			enum class GameState { Playing, Checkmate, Stalemate, Draw };
+
+			// ساختار حقوق قلعه
+			struct CastlingRights {
+				bool whiteKingside = true;
+				bool whiteQueenside = true;
+				bool blackKingside = true;
+				bool blackQueenside = true;
+			};
+
+			// متغیرهای عضو
+			std::array<uint64_t, 12> pieceBitboards; // [WhitePawn, WhiteKnight,... BlackKing]
+			uint64_t occupied = 0;
+			uint64_t empty = ~0ULL;
+			Color turn = Color::White;
+			CastlingRights castling;
+			std::optional<Square> enPassantTarget;
+			int halfMoveClock = 0;
+			int fullMoveNumber = 1;
+			uint64_t zobristKey = 0;
+			std::vector<MoveHistory> moveHistory;
+
+			// توابع اصلی
+			Board();
+			void setFromFEN(const std::string& fen);
+			std::vector<Move> generateLegalMoves();
+			void makeMove(const Move& move);
+			void undoMove();
+			GameState getGameState() const;
+			std::string toFEN() const;
+
+			// توابع کمکی
+			uint64_t getAttackers(Square sq, Color attackerColor) const;
+			bool isSquareAttacked(Square sq, Color attackerColor) const;
+			bool isInCheck(Color color) const;
+			bool isMoveLegal(const Move& move) const;
+
+		private:
+			// توابع داخلی
+			void clearBoard();
+			void updateOccupancy();
+			void updateZobristKey(const Move& move);
+			void handleCastling(Move& move);
+			void handleEnPassant(Move& move);
+			void handlePromotion(Move& move);
+	
+		Board();
+		void resetToStartPosition();
+		void setFromFEN(const std::string& fen);
+		std::string toFEN() const;
+
+		std::vector<Move> generateLegalMoves();
+		bool makeMove(const Move& move);
+		bool isInCheck(Color color) const;
+		void print() const;
+
+		Piece getPiece(Square sq) const;
+
+		// وضعیت بازی
+		Color turn = Color::White;
+		struct CastlingRights {
+			bool whiteKingside = true;
+			bool whiteQueenside = true;
+			bool blackKingside = true;
+			bool blackQueenside = true;
+		} castling;
+		Square enPassantTarget = { -1, -1 };
+		int halfMoveClock = 0;
+		int fullMoveNumber = 1;
+
+	private:
+		std::array<std::array<Piece, 8>, 8> m_board;
+		std::vector<Move> m_moveHistory;
+
+		bool isSquareAttacked(Square sq, Color attacker) const;
+		void clearBoard();
 	public:
 		Board();
 		uint64_t pawns = 0;
@@ -123,115 +252,9 @@ namespace ChessEngine {
 				std::string(1, cols[to_y]) + std::to_string(8 - to_x);
 		}
 	};
-	#pragma once
-#include <array>
-#include <vector>
-#include <string>
-#include <optional>
-#include "Piece.h"
-#include "Move.h"
-#include "Zobrist.h"
 
-namespace ChessEngine {
 
-class Board {
-	// انواع وضعیت‌های بازی
-	enum class GameState { Playing, Checkmate, Stalemate, Draw };
 
-	// ساختار حقوق قلعه
-	struct CastlingRights {
-		bool whiteKingside = true;
-		bool whiteQueenside = true;
-		bool blackKingside = true;
-		bool blackQueenside = true;
-	};
 
-	// متغیرهای عضو
-	std::array<uint64_t, 12> pieceBitboards; // [WhitePawn, WhiteKnight,... BlackKing]
-	uint64_t occupied = 0;
-	uint64_t empty = ~0ULL;
-	Color turn = Color::White;
-	CastlingRights castling;
-	std::optional<Square> enPassantTarget;
-	int halfMoveClock = 0;
-	int fullMoveNumber = 1;
-	uint64_t zobristKey = 0;
-	std::vector<MoveHistory> moveHistory;
-
-	// توابع اصلی
-	Board();
-	void setFromFEN(const std::string& fen);
-	std::vector<Move> generateLegalMoves();
-	void makeMove(const Move& move);
-	void undoMove();
-	GameState getGameState() const;
-	std::string toFEN() const;
-
-	// توابع کمکی
-	uint64_t getAttackers(Square sq, Color attackerColor) const;
-	bool isSquareAttacked(Square sq, Color attackerColor) const;
-	bool isInCheck(Color color) const;
-	bool isMoveLegal(const Move& move) const;
-
-private:
-	// توابع داخلی
-	void clearBoard();
-	void updateOccupancy();
-	void updateZobristKey(const Move& move);
-	void handleCastling(Move& move);
-	void handleEnPassant(Move& move);
-	void handlePromotion(Move& move);
-
-public:
-    // انواع وضعیت‌های بازی
-    enum class GameState { Playing, Checkmate, Stalemate, Draw };
-    
-    // ساختار حقوق قلعه
-    struct CastlingRights {
-        bool whiteKingside = true;
-        bool whiteQueenside = true;
-        bool blackKingside = true;
-        bool blackQueenside = true;
-    };
-
-    // متغیرهای عضو
-    std::array<uint64_t, 12> pieceBitboards; // [WhitePawn, WhiteKnight,... BlackKing]
-    uint64_t occupied = 0;
-    uint64_t empty = ~0ULL;
-    Color turn = Color::White;
-    CastlingRights castling;
-    std::optional<Square> enPassantTarget;
-    int halfMoveClock = 0;
-    int fullMoveNumber = 1;
-    uint64_t zobristKey = 0;
-    std::vector<MoveHistory> moveHistory;
-
-    // توابع اصلی
-    Board();
-    void setFromFEN(const std::string& fen);
-    std::vector<Move> generateLegalMoves();
-    void makeMove(const Move& move);
-    void undoMove();
-    GameState getGameState() const;
-    std::string toFEN() const;
-
-    // توابع کمکی
-    uint64_t getAttackers(Square sq, Color attackerColor) const;
-    bool isSquareAttacked(Square sq, Color attackerColor) const;
-    bool isInCheck(Color color) const;
-    bool isMoveLegal(const Move& move) const;
-
-private:
-    // توابع داخلی
-    void clearBoard();
-    void updateOccupancy();
-    void updateZobristKey(const Move& move);
-    void handleCastling(Move& move);
-    void handleEnPassant(Move& move);
-    void handlePromotion(Move& move);
-};
-
-} // namespace ChessEngine
-// namespace ChessEngine
-
+	
 #endif // CHESSENGINE_BOARD_H

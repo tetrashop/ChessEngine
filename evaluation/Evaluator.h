@@ -1,9 +1,13 @@
 #pragma once
 #include "../Core/Board.h"
-
 namespace ChessEngine {
 
-	class Evaluator {
+	class Evaluator {	
+	private:
+		static constexpr int PieceValues[6] = { 100, 300, 300, 500, 900, 10000 };
+		static int evaluateMaterial(const Board& board);
+		static int evaluatePawnStructure(const Board& board);
+		static int evaluateKingSafety(const Board& board);
 	public:
 		static int evaluate(const Board& board);
 
