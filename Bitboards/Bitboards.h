@@ -10,6 +10,11 @@ namespace ChessEngine {
 	public:
 		enum class Piece { Pawn, Knight, Bishop, Rook, Queen, King, None };
 
+		static uint64_t pawnAttacks(Square sq, Color color);
+		static uint64_t knightAttacks(Square sq);
+		static uint64_t kingAttacks(Square sq);
+		static uint64_t slidingAttacks(Square sq, uint64_t occupied, const std::vector<std::pair<int, int>>& directions);
+
 			// تعریف رنکها و فایلها
 			static constexpr Bitboard Rank1 = 0x00000000000000FF;
 			static constexpr Bitboard FileA = 0x0101010101010101;
@@ -115,7 +120,13 @@ namespace ChessEngine {
 			return attacks;
 		}();
 
-	
+		constexpr Square bitScanForward(uint64_t bb) {
+			return static_cast<Square>(__builtin_ctzll(bb));
+		}
+
+		constexpr int popCount(uint64_t bb) {
+			return __builtin_popcountll(bb));
+		}
 	};
 
 } // namespace ChessEngine

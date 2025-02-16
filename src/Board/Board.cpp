@@ -2,6 +2,7 @@
 #include "MoveGenerator.h"
 #include <iostream>
 #include <sstream>
+#include <immintrin.h>  
 
 namespace ChessEngine {
 
@@ -431,9 +432,6 @@ namespace ChessEngine {
 		knights = 0;
 		// ... (پر کردن Bitboardها بر اساس FEN)  
 	}
-#include <immintrin.h>  
-
-#include <immintrin.h> // برای دستورات AVX/SSE  
 
 	int Board::evaluate() {
 		// مقادیر پایه مهره‌ها (پیاده=100، اسب=300، فیل=300، رخ=500، وزیر=900)  
@@ -495,4 +493,119 @@ namespace ChessEngine {
 		}
 		// ...
 	}
+	void Board::setFromFEN(const std::string& fen) {
+		// پیاده‌سازی کامل پارسر FEN
+		std::istringstream iss(fen);
+		std::string token;
+
+		// پاکسازی صفحه
+		for (auto& row : squares) row.fill(Piece::None);
+
+		// بخش موقعیت مهره‌ها
+		int row = 7, col = 0;
+		iss >> token;
+		for (char c : token) {
+			if (c == '/') { row--; col = 0; continue; }
+			if (isdigit(c)) { col += c - '0'; continue; }
+
+			Piece piece = charToPiece(c);
+			squares[row][col++] = piece;
+		}
+
+		// بخش رنگ نوبت
+		iss >> token;
+		turn = (token == "w") ? Color::White : Color::Black;
+
+		// بخش حقوق قلعه
+		iss >> token;
+		castling = {
+			.whiteKingside = token.find('K') != std::string::npos,
+			.whiteQueenside = token.find('Q') != std::string::npos,
+			.blackKingside = token.find('k') != std::string::npos,
+			.blackQueenside = token.find('q') != std::string::npos
+		};
+
+		// بخش آنپاسان
+		iss >> token;
+		enPassant = (token != "-") ? std::make_optional(parseSquare(token)) : std::nullopt;
+
+		// بخش ساعت حرکت
+		iss >> halfMoveClock >> fullMoveNumber;
+	}
+	std::vector<Move> Board::generateLegalMoves() {
+		return MoveGenerator::generateLegalMoves(*this);
+	}
+
+	bool Board::isInCheck(Color color) const {
+		// پیاده‌سازی بهینه با استفاده از Bitboard
+		auto kingPos = findKing(color);
+		return isSquareAttacked(kingPos, color);
+	}
+
+	bool Board::isMoveLegal(const Move& move) {
+		Board temp = *this;
+		temp.makeMove(move);
+		return !temp.isInCheck(turn);
+	}
+#include "Board.h"
+#include "MoveGenerator.h"
+#include "BitboardUtils.h"
+#include <sstream>
+
+	using namespace ChessEngine;
+
+	Board::Board() {
+		setFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+	}
+
+	void Board::setFromFEN(const std::string& fen) {
+		clearBoard();
+		std::istringstream iss(fen);
+		std::string token;
+
+		// پارس کردن بخش مهره‌ها
+		int rank = 7, file = 0;
+		while (iss >> token && token != " ") {
+			for (char c : token) {
+				if (c == '/') { rank--; file = 0; }
+				else if (isdigit(c)) file += c - '0';
+				else {
+					Piece piece = charToPiece(c);
+					setPiece(Square{ rank, file }, piece);
+					file++;
+				}
+			}
+		}
+
+		// پارس کردن سایر بخش‌ها
+		// ... (پیاده‌سازی کامل)
+	}
+
+	std::vector<Move> Board::generateLegalMoves() {
+		std::vector<Move> moves = MoveGenerator::generatePseudoLegalMoves(*this);
+
+		// حذف حرکات غیرقانونی
+		moves.erase(std::remove_if(moves.begin(), moves.end(),
+			[this](const Move& m) { return !isMoveLegal(m); }), moves.end());
+
+		return moves;
+	}
+
+	void Board::makeMove(const Move& move) {
+		MoveHistory history;
+		history.move = move;
+		history.state = *this;
+		moveHistory.push_back(history);
+
+		// اعمال حرکت
+		// ... (پیاده‌سازی کامل با Bitboard)
+	}
+
+	bool Board::isInCheck(Color color) const {
+		Square kingSquare = bitScanForward(pieceBitboards[color == White ? W_KING : B_KING]);
+		return isSquareAttacked(kingSquare, ~color);
+	}
+	
 } // namespace ChessEngine
+
+

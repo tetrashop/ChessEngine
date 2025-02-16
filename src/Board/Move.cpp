@@ -76,3 +76,25 @@ bool Move::operator==(const Move& other) const {
 bool Move::operator!=(const Move& other) const {
 	return !(*this == other);
 }
+
+
+std::string Move::toString() const {
+	// تبدیل به نماد استاندارد شطرنج (UCI)
+	std::string str;
+	str += (char)('a' + from.y);
+	str += (char)('8' - from.x);
+	str += (char)('a' + to.y);
+	str += (char)('8' - to.x);
+
+	if (promotion != Piece::None)
+		str += tolower(pieceToChar(promotion));
+
+	return str;
+}
+
+bool Move::isValid() const {
+	return from.x >= 0 && from.x < 8 &&
+		from.y >= 0 && from.y < 8 &&
+		to.x >= 0 && to.x < 8 &&
+		to.y >= 0 && to.y < 8;
+}

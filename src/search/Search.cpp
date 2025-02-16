@@ -283,3 +283,26 @@ void Search::lazySMP(int depth) {
 
 	for (auto& t : threads) t.join();
 }
+
+Move Search::findBestMove(Board& board, int depth) {
+	int bestValue = -INFINITY;
+	Move bestMove;
+
+	for (auto& move : board.generateLegalMoves()) {
+		board.makeMove(move);
+		int value = alphaBeta(board, depth - 1, -INFINITY, INFINITY, false);
+		board.undoMove();
+
+		if (value > bestValue) {
+			bestValue = value;
+			bestMove = move;
+		}
+	}
+	return bestMove;
+}
+
+int Search::alphaBeta(Board& board, int depth, int alpha, int beta, bool maximizingPlayer) {
+	if (depth == 0) return Evaluator::evaluate(board);
+
+	// ... (پیاده‌سازی کامل آلفا-بتا)
+}

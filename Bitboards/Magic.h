@@ -1,22 +1,17 @@
-﻿// در Magic.h
+﻿#pragma once
+#include <cstdint>
+
+typedef uint64_t Bitboard;
+typedef int Square;
+
 struct Magic {
-	uint64_t magic;
-	uint64_t mask;
-	uint64_t* attacks;
+	uint64_t magic;  // عدد جادویی
+	Bitboard mask;   // ماسک حرکتی (مربوط به مربع خاص)
+	Bitboard* attacks; // آرایه حملات از پیش محاسبه‌شده
+	int shift;       // تعداد بیت‌های مورد نیاز برای شیفت
 };
 
 extern Magic bishopMagics[64];
 extern Magic rookMagics[64];
 
-void initMagics() {
-	// مقادیر از پیش محاسبه‌شده برای فیل
-	bishopMagics[0] = { 0x123456789ABCDEF0, 0x007E7E7E7E7E00, /*...*/ };
-	// ...
-}
-// در Magic.cpp
-Bitboard getBishopAttacks(Square sq, Bitboard occupancy) {
-	occupancy &= bishopMasks[sq];
-	occupancy *= bishopMagics[sq];
-	occupancy >>= 64 - 9; // 9 بیت برای فیل
-	return bishopAttacks[sq][occupancy];
-}
+void initMagics(); // مقداردهی اولیه

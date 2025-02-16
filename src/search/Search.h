@@ -6,6 +6,13 @@
 
 class Search {
 public:
+	static Move findBestMove(Board& board, int depth);
+
+private:
+	static int alphaBeta(Board& board, int depth, int alpha, int beta, bool maximizingPlayer);
+	static int quiescenceSearch(Board& board, int alpha, int beta);
+
+public:
 	int history[64][64]; // [from][to] تاریخچه حرکات موفق
 	struct SearchResult {
 		Move bestMove;
@@ -58,6 +65,7 @@ private:
 
 	int alphaBeta(Board& board, int depth, int alpha, int beta, bool maximizingPlayer);
 };
+
 // در Search.h  
 
 struct TranspositionTableEntry {

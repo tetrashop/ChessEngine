@@ -1,9 +1,10 @@
-﻿#include "ChessBoard.h"
-#include <algorithm>
-
+﻿
 #pragma once  
 #include <vector>  
 #include "Piece.h"  
+#include "ChessBoard.h"  
+#include "Zobrist.h" // فرضاً پیادهسازی شده  
+#include <algorithm>
 
 class ChessBoard {
 public:
@@ -24,8 +25,6 @@ private:
 	uint64_t zobristKey;
 };
 ChessBoard::ChessBoard() { initializeBoard(); }
-#include "ChessBoard.h"  
-#include "Zobrist.h" // فرضاً پیادهسازی شده  
 
 ChessBoard::ChessBoard() {
 	Initialize();

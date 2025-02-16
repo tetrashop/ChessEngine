@@ -312,3 +312,37 @@ std::vector<Move> MoveGenerator::GenerateEnPassantMoves(const ChessBoard& board,
 uint64_t MoveGenerator::generateKnightAttacks(Square sq) {
 	return precomputedKnightAttacks[sq]; // استفاده از جدول پیش‌محاسبه شده
 }
+#include "MoveGenerator.h"
+#include "../Core/BitboardUtils.h"
+
+using namespace ChessEngine;
+
+void MoveGenerator::generatePawnMoves(Board& board, std::vector<Move>& moves) {
+	const Color color = board.turn;
+	const uint64_t pawns = board.pieceBitboards[color == White ? W_PAWN : B_PAWN];
+
+	// محاسبه حرکات پیشرو و حملات
+	uint64_t pushes = BitboardUtils::pawnPushes(pawns, color) & board.empty;
+	uint64_t attacks = BitboardUtils::pawnAttacks(pawns, color) & board.occupiedColors[~color];
+
+	while (pushes) {
+		Square to = popLsb(pushes);
+		Square from = to - (color == White ? 8 : -8);
+		addMove(from, to, Normal, moves);
+	}
+
+	// ... (پیاده‌سازی کامل حملات، آنپاسان و ارتقاء)
+}
+
+void MoveGenerator::generateCastlingMoves(Board& board, std::vector<Move>& moves) {
+	if (board.isInCheck(board.turn)) return;
+
+	const uint64_t castleMask = MagicBitboards::getCastleMask(board);
+	while (castleMask) {
+		Square kingTo = popLsb(castleMask);
+		// بررسی مسیر امن
+		if (!board.isCastlePathAttacked(kingTo)) {
+			moves.emplace_back(...);
+		}
+	}
+}
