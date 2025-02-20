@@ -116,7 +116,7 @@ Modern C# chess engines exemplify the synergy of classical algorithms and cuttin
 - Table 1: Algorithm performance metrics.  
 - Table 2: Engine feature comparison.  
 
-۴٬۴۰۲ / ۵٬۰۰۰
+
 ### C# Chess Engine Configuration and Usage Guide
 **Author: Ramin Ejlal**
 *This document covers the requirements, settings, usage, and troubleshooting of a C# based chess engine. It is designed for integration into a repository and standard development.*
