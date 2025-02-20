@@ -260,5 +260,5 @@ public ChessException(string message) : base(message) { }
 - **Figure 1**: Engine architecture with separate layers for rules, search, and UI.
 
 *For more details, see the technical documentation and unit tests in the repository.*
-ارسال بازخورد
+
 
