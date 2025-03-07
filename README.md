@@ -261,4 +261,50 @@ public ChessException(string message) : base(message) { }
 
 *For more details, see the technical documentation and unit tests in the repository.*
 
+# ChessEngine: A Modern Chess Engine Inspired by Stockfish  
 
+![ChessEngine Logo](https://via.placeholder.com/150x50.png?text=ChessEngine)  
+[![Build Status](https://img.shields.io/github/actions/workflow/status/yourusername/ChessEngine/build.yml)](https://github.com/yourusername/ChessEngine/actions)  
+[![License](https://img.shields.io/badge/license-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)  
+[![UCI Compatible](https://img.shields.io/badge/UCI-Compatible-brightgreen)](https://en.wikipedia.org/wiki/Universal_Chess_Interface)  
+
+**ChessEngine** is a high-performance, open-source chess engine designed to compete with state-of-the-art engines like Stockfish. Built with modern C++ and optimized for both speed and strategic depth, ChessEngine combines advanced algorithms with a modular architecture to deliver cutting-edge gameplay.  
+
+---
+
+## 🚀 Features  
+- **Advanced Search Algorithms**:  
+  - Alpha-Beta pruning with Principal Variation Search (PVS).  
+  - Quiescence Search to handle tactical positions.  
+  - Iterative Deepening with dynamic time management.  
+
+- **Evaluation Function**:  
+  - Material balance, piece-square tables, mobility, and king safety.  
+  - Tapered evaluation for smooth transitions between game phases.  
+
+- **UCI Compatibility**:  
+  - Seamless integration with GUIs like Arena, ChessBase, and lichess.org.  
+
+- **Parallel Search**:  
+  - Multi-threaded Lazy SMP for efficient use of modern CPUs.  
+
+- **Transposition Table**:  
+  - Efficient hash tables for storing and reusing search results.  
+
+- **Adaptive Learning**:  
+  - Optional integration with neural networks for position evaluation.  
+
+---
+
+## 📥 Installation  
+### Prerequisites  
+- C++17 compiler (GCC, Clang, or MSVC).  
+- CMake (≥3.15).  
+
+### Build Instructions  
+```bash  
+git clone https://github.com/yourusername/ChessEngine.git  
+cd ChessEngine  
+mkdir build && cd build  
+cmake ..  
+make -j4  
