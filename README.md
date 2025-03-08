@@ -446,7 +446,7 @@ ChessEngine is not just another engine—it’s a testament to the synergy betwe
 
 --- 
 
-For questions or collaborations, contact [your.email@example.com](mailto:your.email@example.com).  
+For questions or collaborations, contact [ramin.edjlal1359@gmail.com](mailto:ramin.edjlal1359@gmail.com).  
 ```  
 
 This README and article provide a professional yet engaging overview of ChessEngine, positioning it as a competitive, innovative project while inviting community involvement.
