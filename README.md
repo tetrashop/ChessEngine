@@ -695,7 +695,7 @@ This comprehensive README maintains full parity with the Persian version while a
 3. See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.  
 
 ### Users:  
-- Download the latest beta: [v0.9.0 Release](https://github.com/tetrashop/Refrigeratorz/releases).  
+- Download the latest beta: [v0.9.0 Release]([https://github.com/tetrashop/ChessEngine](https://github.com/tetrashop/ChessEngine/releases).  
 - Join our [Discord Community](https://discord.gg/yourlink).  
 
 ---
