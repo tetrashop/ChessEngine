@@ -76,3 +76,8 @@ MIT License
 
 - **URL:** [https://vercel.com/ramin-edjlal-s-projects/chess-engine-89fz/5HAhLropjyryGKHwC7ogKqbD1juC](https://vercel.com/ramin-edjlal-s-projects/chess-engine-89fz/5HAhLropjyryGKHwC7ogKqbD1juC)
 <!-- Trigger deploy: Mon Aug 17 01:47:27 +0330 2026 -->
+
+## 🌐 دیپلوی
+
+- **URL:** [https://ChessEngine.vercel.app](https://ChessEngine.vercel.app)
+- **وضعیت:** ✅ فعال
